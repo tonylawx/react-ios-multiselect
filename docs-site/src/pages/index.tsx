@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
@@ -6,7 +6,65 @@ import Heading from "@theme/Heading";
 import DemoBox from "../components/DemoBox";
 import { MultiDemo } from "../components/demos";
 
-const AGENT_PROMPT = `Use the npm package \`react-ios-multiselect\` to add a select control: it's mobile-first, has ZERO runtime deps beyond react/react-dom, and ships its own CSS — do NOT add any UI/icon/CSS library alongside it. Install with \`bun add react-ios-multiselect\`, import the stylesheet once at the app root (\`import "react-ios-multiselect/style.css"\`), then render \`<Select value={v} onValueChange={setV} options={opts} />\` for single-select or \`<Select multiple value={arr} onValueChange={setArr} options={opts} />\` for multi-select, where each option is \`{ value, label, description?, disabled?, icon? }\`. Full docs: https://tonylawx.github.io/react-ios-multiselect/`;
+const AGENT_PROMPT = `Use the npm package \`react-ios-multiselect\` for the select control. Read the docs and follow them: https://tonylawx.github.io/react-ios-multiselect/`;
+
+/** A code card with a one-click Copy button. */
+function CopyPrompt({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard may be blocked; ignore */
+    }
+  };
+  return (
+    <div
+      style={{
+        position: "relative",
+        border: "1px solid var(--ifm-color-emphasis-300)",
+        borderRadius: "var(--ifm-global-radius)",
+        background: "var(--ifm-color-emphasis-100)",
+        padding: "0.75rem 1rem",
+        paddingRight: "4.5rem",
+        overflowX: "auto",
+      }}
+    >
+      <pre
+        style={{
+          margin: 0,
+          whiteSpace: "pre-wrap",
+          wordBreak: "break-word",
+          fontSize: "0.85rem",
+          lineHeight: 1.5,
+        }}
+      >
+        <code>{text}</code>
+      </pre>
+      <button
+        type="button"
+        onClick={onCopy}
+        aria-label="Copy prompt"
+        style={{
+          position: "absolute",
+          top: "0.5rem",
+          right: "0.5rem",
+          border: "1px solid var(--ifm-color-emphasis-300)",
+          borderRadius: "var(--ifm-global-radius)",
+          background: "var(--ifm-background-color)",
+          color: "var(--ifm-color-emphasis-700)",
+          fontSize: "0.8rem",
+          padding: "0.25rem 0.6rem",
+          cursor: "pointer",
+        }}
+      >
+        {copied ? "Copied ✓" : "Copy"}
+      </button>
+    </div>
+  );
+}
 
 function Feature({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -26,11 +84,11 @@ export default function Home(): JSX.Element {
         <p style={{ fontSize: "1.15rem", opacity: 0.85, maxWidth: 640, margin: "0.5rem auto" }}>
           {siteConfig.tagline}
         </p>
-        <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", marginTop: "1.5rem", flexWrap: "wrap" }}>
-          <Link className="button button--primary button--lg" to="/docs/intro" style={{ minWidth: 180, textAlign: "center" }}>
+        <div className="hero-buttons">
+          <Link className="button button--primary button--lg hero-btn" to="/docs/intro">
             Get started
           </Link>
-          <Link className="button button--secondary button--lg" to="/playground" style={{ minWidth: 180, textAlign: "center" }}>
+          <Link className="button button--secondary button--lg hero-btn" to="/playground">
             Try the playground
           </Link>
         </div>
@@ -44,27 +102,7 @@ export default function Home(): JSX.Element {
             Copy this one prompt, paste it to your AI coding agent, and it ships the
             component with no other context needed.
           </p>
-          <div
-            style={{
-              border: "1px solid var(--ifm-color-emphasis-300)",
-              borderRadius: "var(--ifm-global-radius)",
-              background: "var(--ifm-color-emphasis-100)",
-              padding: "0.75rem 1rem",
-              overflowX: "auto",
-            }}
-          >
-            <pre
-              style={{
-                margin: 0,
-                whiteSpace: "pre-wrap",
-                wordBreak: "break-word",
-                fontSize: "0.85rem",
-                lineHeight: 1.5,
-              }}
-            >
-              <code>{AGENT_PROMPT}</code>
-            </pre>
-          </div>
+          <CopyPrompt text={AGENT_PROMPT} />
           <p style={{ fontSize: "0.85rem", opacity: 0.7, marginBottom: 0 }}>
             Contributing as an agent? See the{" "}
             <Link to="/docs/agent-guide">agent guide</Link>.
