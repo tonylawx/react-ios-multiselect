@@ -8,6 +8,14 @@ sidebar_position: 5
 [`AGENTS.md`](https://github.com/tonylawx/react-ios-multiselect/blob/main/AGENTS.md)，
 内容相同——改仓库代码前先读它。
 
+## 📋 一句话 prompt —— 直接发给 agent
+
+复制下面这段，粘给你的 AI 编程 agent，它无需其它上下文就能接入组件。
+
+```txt
+用 npm 包 `react-ios-multiselect` 加一个 select 控件：它是移动优先的，除 react/react-dom 外零运行时依赖，自带 CSS——不要在它旁边加任何 UI/图标/CSS 库。用 `bun add react-ios-multiselect` 安装，在 app 根入口引入一次样式表（`import "react-ios-multiselect/style.css"`），然后渲染 `<Select value={v} onValueChange={setV} options={opts} />` 做单选，或 `<Select multiple value={arr} onValueChange={setArr} options={opts} />` 做多选，其中每个 option 是 `{ value, label, description?, disabled?, icon? }`。完整文档：https://tonylawx.github.io/react-ios-multiselect/
+```
+
 :::tip[TL;DR —— 直接接入]
 **如果你的任务是「给这个 app 加一个 select」，照抄下面这些，别加别的：**
 
