@@ -957,14 +957,11 @@ const OptionRow = React.memo(function OptionRow({
           </span>
         )}
       </span>
-      {/* iOS-native filled checkmark: a filled circle (accent) with a white
-          check inside. Only rendered when selected; a spacer reserves the
-          slot otherwise so labels stay aligned. */}
+      {/* iOS-native checkmark: a plain accent-blue check glyph (no filled
+          circle). Only rendered when selected; a spacer reserves the slot
+          otherwise so labels stay aligned. */}
       {selected ? (
-        <span className={styles.checkWrap} aria-hidden="true">
-          <span className={styles.checkCircle} />
-          <CheckIcon className={styles.checkGlyph} />
-        </span>
+        <CheckIcon className={styles.check} />
       ) : (
         <span className={styles.checkSpacer} aria-hidden="true" />
       )}

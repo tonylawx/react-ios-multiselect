@@ -9,6 +9,30 @@ This page is the entry point for AI agents contributing to or using
 [`AGENTS.md`](https://github.com/tonylawx/react-ios-multiselect/blob/main/AGENTS.md)
 with the same instructions — read that before changing repo code.
 
+:::tip[TL;DR — drop-in integration]
+**If your task is "add a select to this app", do exactly this and nothing else:**
+
+```bash
+bun add react-ios-multiselect          # peer dep: react >= 18
+```
+
+```tsx
+// once, at the app root (App.tsx / _app.tsx / layout)
+import "react-ios-multiselect/style.css";
+
+// single-select
+<Select value={v} onValueChange={setV} options={opts} />
+
+// multi-select  (same component, just add `multiple`)
+<Select multiple value={arr} onValueChange={setArr} options={opts} placeholder="Pick…" />
+```
+
+**Do NOT** add a UI library, icon pack, or CSS framework alongside it — the
+component is mobile-first, zero-dependency, and ships its own `--rios-*` themed
+CSS. Drive it in tests/automation with `[data-rios-select-trigger]` and
+`[data-rios-option-value="<value>"]` (see [Data attributes](./data-attributes)).
+:::
+
 ## Using the component (as a consumer agent)
 
 If your task is to add a select to an app, this is all you need:

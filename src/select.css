@@ -193,31 +193,15 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* iOS-native filled checkmark (selected rows)                        */
-/* A filled circle in the accent color with a white check glyph.      */
+/* iOS-native checkmark (selected rows)                               */
+/* A plain accent-blue check glyph — no filled circle, matching iOS.  */
 /* ------------------------------------------------------------------ */
-.rios-check-wrap {
-  position: relative;
+.rios-check {
   width: var(--rios-check-size);
   height: var(--rios-check-size);
   flex: 0 0 auto;
-}
-
-.rios-check-circle {
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  background: var(--rios-color-accent);
-}
-
-.rios-check-glyph {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: calc(var(--rios-check-size) * 0.62);
-  height: calc(var(--rios-check-size) * 0.62);
-  color: #fff;
-  stroke-width: 3.5;
+  color: var(--rios-color-accent);
+  stroke-width: 3;
 }
 
 .rios-check-spacer {
