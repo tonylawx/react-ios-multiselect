@@ -1,0 +1,66 @@
+name: docs
+
+# Build the Docusaurus site and publish to GitHub Pages.
+# Docs live in docs-site/ and are served at the project Pages URL
+# (https://tonylawx.github.io/react-ios-multiselect/) with base /react-ios-multiselect/.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs-site/**"
+      - "src/**"
+      - ".github/workflows/docs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment.
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3
+
+      # Build the component package first so the docs site can resolve
+      # `react-ios-multiselect` via the file:.. dependency (it points at dist/).
+      - name: Build component package
+        working-directory: .
+        run: |
+          bun install --frozen-lockfile
+          bun run build
+
+      - name: Install docs site deps
+        working-directory: docs-site
+        run: bun install --frozen-lockfile
+
+      - name: Build docs site (incl. zh-CN translations)
+        working-directory: docs-site
+        run: bun run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs-site/build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

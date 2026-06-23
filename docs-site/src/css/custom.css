@@ -1,0 +1,38 @@
+/**
+ * react-ios-multiselect docs — custom theme.
+ * Keeps Docusaurus defaults; adds a phone-frame preview wrapper for demos.
+ */
+:root {
+  --ifm-color-primary: #0a84ff;
+  --ifm-color-primary-dark: #0978e0;
+  --ifm-color-primary-darker: #086fd4;
+  --ifm-color-primary-darkest: #075cab;
+  --ifm-color-primary-light: #1f90ff;
+  --ifm-color-primary-lighter: #2a96ff;
+  --ifm-color-primary-lightest: #4ea7ff;
+  --ifm-code-font-size: 90%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] {
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.12);
+}
+
+/* Phone preview frame so the mobile sheet looks at home in a docs page. */
+.phone-preview {
+  width: 100%;
+  max-width: 390px;
+  margin: 1.5rem auto;
+  padding: 24px 16px 32px;
+  background: linear-gradient(180deg, #faf7f0 0%, #f0ebe1 100%);
+  border-radius: 32px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.demo-caption {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-top: 0.5rem;
+}
