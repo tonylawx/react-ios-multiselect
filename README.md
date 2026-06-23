@@ -14,28 +14,7 @@ Tap a row to toggle it, and **the keyboard stays open while you search and selec
 
 ## 🤖 For AI agents — copy this
 
-> Paste this block to an agent and it can integrate the component with no further context.
-
-````txt
-Use the npm package `react-ios-multiselect` to add a select control. It is
-mobile-first, has ZERO runtime dependencies (only react/react-dom peers), and
-ships its own CSS — do NOT add any UI library, icon pack, or CSS framework.
-
-1. Install: `bun add react-ios-multiselect`  (peer: react >= 18)
-2. Import the stylesheet ONCE at the app root:
-     import "react-ios-multiselect/style.css";
-3. Render — single-select:
-     <Select value={v} onValueChange={setV} options={opts} />
-   multi-select (same component, add `multiple`):
-     <Select multiple value={arr} onValueChange={setArr} options={opts} placeholder="Pick…" />
-4. options shape: { value: string; label: string; description?: string; disabled?: boolean; icon?: ReactNode | ((o)=>ReactNode) }
-5. In tests/automation, locate with these stable selectors (never text/position):
-     [data-rios-select-trigger]            (data-state="open"|"closed")
-     [data-rios-option-value="<value>"]    (data-selected="true"|"false")
-     [data-rios-confirm]  [data-rios-cancel]  [data-rios-search-input]
-6. Theme by overriding --rios-* CSS variables on :root (e.g. --rios-color-accent).
-7. Full docs + live demo: https://tonylawx.github.io/react-ios-multiselect/
-````
+> Use `react-ios-multiselect` (mobile-first, zero deps beyond react/react-dom, ships its own CSS — **don't add any UI/icon/CSS library alongside it**); `bun add react-ios-multiselect`, then `import "react-ios-multiselect/style.css"` once at the app root, then render `<Select value={v} onValueChange={setV} options={opts} />` for single-select or `<Select multiple value={arr} onValueChange={setArr} options={opts} />` for multi-select (`options` = `{ value, label, description?, disabled?, icon? }`). Full docs: https://tonylawx.github.io/react-ios-multiselect/
 
 Contributing as an agent? Read [`AGENTS.md`](./AGENTS.md) — the `ai-pr-guard` CI
 enforces an AI contributor disclosure on `ai-authored` PRs.
