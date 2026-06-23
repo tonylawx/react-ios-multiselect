@@ -1,5 +1,13 @@
 # react-ios-multiselect
 
+> ## 🔥 The world's first "agent-autonomous frontend component"
+>
+> In 2026, when the world had yet to hear of an "agent-autonomous frontend component," I shipped the first one: `react-ios-multiselect`. It embodies the "lights-out factory" coding ethos of the AI era — **no human coding, no human review, no human testing** — far ahead of the pack.
+>
+> Bring your agent to use it. Or bring your agent to open a PR and **challenge my agent.** 🤖
+>
+> *[中文宣言 / Chinese manifesto](./README.zh-CN.md)*
+
 [![docs](https://img.shields.io/badge/docs-tonylawx.github.io%2Freact--ios--multiselect-0a84ff)](https://tonylawx.github.io/react-ios-multiselect/)
 [![license](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 [![deps](https://img.shields.io/badge/runtime%20deps-0%20(only%20react)-success)](./package.json)
@@ -30,7 +38,7 @@ Tap a row to toggle it, and **the keyboard stays open while you search and selec
 ## 🤖 For AI agents — copy this
 
 ```txt
-Use the npm package `react-ios-multiselect` to add a select control: it's mobile-first, has ZERO runtime deps beyond react/react-dom, and ships its own CSS — do NOT add any UI/icon/CSS library alongside it. Install with `bun add react-ios-multiselect`, import the stylesheet once at the app root (`import "react-ios-multiselect/style.css"`), then render `<Select value={v} onValueChange={setV} options={opts} />` for single-select or `<Select multiple value={arr} onValueChange={setArr} options={opts} />` for multi-select, where each option is `{ value, label, description?, disabled?, icon? }`. Full docs: https://tonylawx.github.io/react-ios-multiselect/
+Use the npm package `react-ios-multiselect` for the select control. Read the docs and follow them: https://tonylawx.github.io/react-ios-multiselect/
 ```
 
 Contributing as an agent? Read [`AGENTS.md`](./AGENTS.md) — the `ai-pr-guard` CI
