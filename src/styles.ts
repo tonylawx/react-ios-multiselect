@@ -15,27 +15,13 @@ export const styles = {
   chevron: "rios-chevron",
   chevronOpen: "rios-chevron-open",
 
-  // scroll helpers
-  scroll: "rios-scroll",
-  sheetScroll: "rios-sheet-scroll",
-
-  // desktop body
-  desktopBody: "rios-desktop-body",
-  desktopSearchBar: "rios-desktop-search-bar",
-  searchIcon: "rios-search-icon",
-  searchInput: "rios-search-input",
-  desktopScrollWrap: "rios-desktop-scroll-wrap",
-  desktopScroll: "rios-desktop-scroll",
-  edgeTop: "rios-edge-top",
-  edgeBottom: "rios-edge-bottom",
-  emptyText: "rios-empty-text",
+  // scroll helper
+  listScroll: "rios-list-scroll",
 
   // option rows
   option: "rios-option",
-  optionDesktop: "rios-option-desktop",
-  optionDesktopSelected: "rios-option-desktop-selected",
-  optionMobile: "rios-option-mobile",
-  optionMobileSelected: "rios-option-mobile-selected",
+  optionRow: "rios-option-row",
+  optionRowSelected: "rios-option-row-selected",
   optionDisabled: "rios-option-disabled",
   optionMain: "rios-option-main",
   optionLabel: "rios-option-label",
@@ -44,12 +30,13 @@ export const styles = {
   // iOS-native filled checkmark
   checkWrap: "rios-check-wrap",
   checkCircle: "rios-check-circle",
-  checkCircleDesktop: "rios-check-circle-desktop",
-  checkCircleMobile: "rios-check-circle-mobile",
   checkGlyph: "rios-check-glyph",
   checkSpacer: "rios-check-spacer",
 
-  // mobile sheet
+  // empty state
+  emptyText: "rios-empty-text",
+
+  // sheet
   overlay: "rios-overlay",
   overlayVisible: "rios-overlay-visible",
   overlayHidden: "rios-overlay-hidden",
@@ -69,15 +56,14 @@ export const styles = {
   confirmSpacer: "rios-confirm-spacer",
   sheetBody: "rios-sheet-body",
 
-  // mobile list
-  mobileListWrap: "rios-mobile-list-wrap",
-  mobileList: "rios-mobile-list",
+  // virtualized list
+  listWrap: "rios-list-wrap",
+  list: "rios-list",
   virtualTrack: "rios-virtual-track",
   virtualWindow: "rios-virtual-window",
-  mobileEdgeTop: "rios-mobile-edge-top",
-  mobileEmptyText: "rios-mobile-empty-text",
+  listEdgeTop: "rios-list-edge-top",
 
-  // mobile search accessory
+  // search accessory
   searchAccessory: "rios-search-accessory",
   searchAccessoryBar: "rios-search-accessory-bar",
   searchAccessoryIcon: "rios-search-accessory-icon",
@@ -85,9 +71,6 @@ export const styles = {
   clearBtn: "rios-clear-btn",
   clearIcon: "rios-clear-icon",
   safeAreaSpacer: "rios-safe-area-spacer",
-
-  // popover
-  popoverContent: "rios-popover-content",
 } as const;
 
 export type SelectStyles = typeof styles;

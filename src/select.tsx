@@ -1,10 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Popover as PopoverPrimitive } from "radix-ui";
-import { CheckIcon, ChevronDownIcon, SearchIcon, XIcon } from "lucide-react";
-
-import { MOBILE_BREAKPOINT, computeMobileSheetLayout } from "./select-layout";
+import { CheckIcon, ChevronDownIcon, SearchIcon, XIcon } from "./icons";
+import { computeMobileSheetLayout } from "./select-layout";
 import {
   OPTION_ROW_HEIGHT,
   computeVirtualOptionRange,
@@ -19,11 +17,10 @@ import {
   type OptionGesture,
   shouldDeferViewportLayout
 } from "./select-interaction";
-import { getMountPolicy } from "./select-performance";
 import { cn } from "./utils";
 import { styles } from "./styles";
 
-const MOBILE_SHEET_TRANSITION_MS = 220;
+const SHEET_TRANSITION_MS = 220;
 
 export type SelectOption = {
   value: string;
@@ -39,10 +36,8 @@ export type SelectBaseProps = {
   emptyText?: string;
   searchable?: boolean;
   className?: string;
-  contentClassName?: string;
   disabled?: boolean;
-  mobileBreakpoint?: number;
-  /** Mobile sheet header title. Defaults to placeholder. */
+  /** Sheet header title. Defaults to placeholder. */
   mobileTitle?: string;
   /** "Set/确认" button label (multi-select). Defaults to "Set". */
   mobileSetLabel?: string;
@@ -71,17 +66,15 @@ export type MultiProps = SelectBaseProps & {
 export type SelectProps = SingleProps | MultiProps;
 
 /**
- * Select — responsive select with a native-feeling iOS picker on mobile.
- *
- * - Desktop: Radix Popover dropdown
- * - Mobile: keyboard-aware modal with draft selection, virtualized rows,
- *           momentum scrolling, ESC and backdrop dismissal
- * - Desktop: immediate selection inside a Radix popover
- * - Performance: stable callbacks, memoised filter/labels and windowed rows
+ * Select — a native iOS-feeling select with a keyboard-aware bottom sheet,
+ * virtualized rows (2,000+ options scroll smoothly), iOS-native selected state
+ * (blue text + filled checkmark), and draft/commit multi-select.
  *
  * Single-select (`multiple` omitted/false) and multi-select (`multiple`) share
  * one component; the prop switches the `value` / `onValueChange` signature and
- * the mobile commit behavior (immediate vs draft-then-Set).
+ * the commit behavior (immediate vs draft-then-Set).
+ *
+ * Mobile-first: the trigger opens a bottom sheet (no desktop popover path).
  *
  * Styling comes from `select.css` (global, prefixed `rios-`). Theme via the
  * `--rios-*` CSS variables, which all carry sensible defaults on `:root`.
@@ -89,6 +82,8 @@ export type SelectProps = SingleProps | MultiProps;
  * Agent-control surface: stable `data-rios-*` attributes on every interactive
  * element so Playwright/agent drivers can locate and drive the component
  * reliably (see docs/components.md).
+ *
+ * Zero runtime dependencies beyond react/react-dom (peer).
  */
 export function Select(props: SelectProps) {
   const {
@@ -98,9 +93,7 @@ export function Select(props: SelectProps) {
     emptyText,
     searchable,
     className,
-    contentClassName,
     disabled,
-    mobileBreakpoint = MOBILE_BREAKPOINT,
     mobileTitle,
     mobileSetLabel,
     mobileCancelLabel,
@@ -119,29 +112,16 @@ export function Select(props: SelectProps) {
   const formatSelectedCount = selectedCountLabel
     ?? ((count: number) => `${count} selected`);
 
-  const [desktopOpen, setDesktopOpen] = React.useState(false);
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [isMobile, setIsMobile] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
-  const mountPolicy = getMountPolicy(isMobile);
-  const isOpen = desktopOpen || mobileOpen;
 
-  const mobileSearchRef = React.useRef<HTMLInputElement>(null);
-
-  // --- Detect mobile vs desktop ---
-  React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${mobileBreakpoint - 1}px)`);
-    const update = () => setIsMobile(mql.matches);
-    update();
-    mql.addEventListener("change", update);
-    return () => mql.removeEventListener("change", update);
-  }, [mobileBreakpoint]);
+  const searchRef = React.useRef<HTMLInputElement>(null);
 
   // --- Value helpers ---
   // Multi-select uses a draft: opening the sheet copies the controlled value
   // into `draftSelected`. Toggling only mutates the draft (instant feedback);
   // "Set" commits it to the parent, "Cancel" discards it.
-  // Single-select commits after the mobile close animation starts.
+  // Single-select commits after the close animation starts.
   const rawValue = props.value;
   const controlledSelected: string[] = React.useMemo(
     () =>
@@ -155,13 +135,13 @@ export function Select(props: SelectProps) {
   );
 
   const [draftSelected, setDraftSelected] = React.useState<string[]>(controlledSelected);
-  // Tracks whether the mobile sheet DOM is present (open OR sliding out).
+  // Tracks whether the sheet DOM is present (open OR sliding out).
   // Rows show the draft as long as the sheet is mounted, so the selection
   // stays visually stable during the close animation (no flash back to the
   // pre-commit controlled value).
   const [sheetMounted, setSheetMounted] = React.useState(false);
 
-  // What the rows currently show: draft while mobile sheet is mounted (multi),
+  // What the rows currently show: draft while sheet is mounted (multi),
   // otherwise the controlled value.
   const displaySelected = multiple && sheetMounted ? draftSelected : controlledSelected;
 
@@ -196,8 +176,8 @@ export function Select(props: SelectProps) {
   }, [controlledSelected, multiple, labelByValue, formatSelectedCount]);
 
   // --- Toggle handler ---
-  // Mobile multi: mutate draft only — committed with the blue check button.
-  // Desktop multi: commit immediately. Single: select and close.
+  // Multi: mutate draft only — committed with the blue check button.
+  // Single: select and close.
   // Stable identity via refs so OptionRow's React.memo short-circuits; only
   // the toggled row re-renders.
   const onValueChange = props.multiple
@@ -209,42 +189,31 @@ export function Select(props: SelectProps) {
   draftRef.current = draftSelected;
   const multipleRef = React.useRef(multiple);
   multipleRef.current = multiple;
-  const isMobileRef = React.useRef(isMobile);
-  isMobileRef.current = isMobile;
   const controlledSelectedRef = React.useRef(controlledSelected);
   controlledSelectedRef.current = controlledSelected;
 
-  const closeMobile = React.useCallback(() => {
-    mobileSearchRef.current?.blur();
-    setMobileOpen(false);
+  const close = React.useCallback(() => {
+    searchRef.current?.blur();
+    setOpen(false);
   }, []);
 
-  const commitAfterMobileClose = React.useCallback((commit: () => void) => {
-    window.setTimeout(commit, MOBILE_SHEET_TRANSITION_MS);
+  const commitAfterClose = React.useCallback((commit: () => void) => {
+    window.setTimeout(commit, SHEET_TRANSITION_MS);
   }, []);
 
   const handleToggle = React.useCallback((val: string) => {
     if (multipleRef.current) {
-      const cur = isMobileRef.current ? draftRef.current : controlledSelectedRef.current;
+      const cur = draftRef.current;
       const next = cur.includes(val)
         ? cur.filter((v) => v !== val)
         : cur.concat(val);
-      if (isMobileRef.current) {
-        setDraftSelected(next); // mobile draft-only: committed by the blue check button
-      } else {
-        (onValueChangeRef.current as (value: string[]) => void)(next);
-      }
+      setDraftSelected(next); // draft-only: committed by the blue check button
     } else {
       const cb = onValueChangeRef.current as (v: string) => void;
-      if (isMobileRef.current) {
-        closeMobile();
-        commitAfterMobileClose(() => cb(val));
-      } else {
-        setDesktopOpen(false);
-        cb(val);
-      }
+      close();
+      commitAfterClose(() => cb(val));
     }
-  }, [closeMobile, commitAfterMobileClose]);
+  }, [close, commitAfterClose]);
 
   // --- Multi-select commit / cancel (header buttons) ---
   // Close the sheet FIRST (starts slide-out this frame), then commit to the
@@ -253,12 +222,12 @@ export function Select(props: SelectProps) {
   const commitMulti = React.useCallback(() => {
     const cb = onValueChangeRef.current as (v: string[]) => void;
     const draft = draftRef.current;
-    closeMobile();
-    commitAfterMobileClose(() => cb(draft));
-  }, [closeMobile, commitAfterMobileClose]);
+    close();
+    commitAfterClose(() => cb(draft));
+  }, [close, commitAfterClose]);
 
   const cancelMulti = React.useCallback(() => {
-    closeMobile(); // draft is discarded — display reverts to controlled
+    close(); // draft is discarded — display reverts to controlled
   }, []);
 
   // --- Deferred search for smooth typing ---
@@ -280,22 +249,22 @@ export function Select(props: SelectProps) {
     return out;
   }, [options, deferredQuery, isSearchable]);
 
-  // Identity used to reset the mobile list scroll: changes whenever the
-  // *visible* result set's start or size changes — independent of whether the
-  // underlying array reference was reused (e.g. empty query returns the same
-  // `options` array). Drives MobileOptionList's scroll-to-top reset.
+  // Identity used to reset the list scroll: changes whenever the *visible*
+  // result set's start or size changes — independent of whether the underlying
+  // array reference was reused (e.g. empty query returns the same `options`
+  // array). Drives OptionList's scroll-to-top reset.
   const optionListKey = optionListSignature(filteredOptions);
 
   // Prepare the next open after the close animation has finished. Resetting
   // search and draft state here keeps that work out of the user's next click.
   React.useEffect(() => {
-    if (mobileOpen || sheetMounted) return;
+    if (open || sheetMounted) return;
     if (query) setQuery("");
     if (multiple) setDraftSelected(controlledSelected);
-  }, [controlledSelected, mobileOpen, multiple, query, sheetMounted]);
+  }, [controlledSelected, open, multiple, query, sheetMounted]);
 
-  const openMobile = () => {
-    setMobileOpen(true);
+  const openSheet = () => {
+    setOpen(true);
   };
 
   // ---- Trigger ----
@@ -305,16 +274,12 @@ export function Select(props: SelectProps) {
       className={cn(styles.trigger, className)}
       disabled={disabled}
       data-rios-select-trigger
-      data-state={isOpen ? "open" : "closed"}
-      aria-haspopup="listbox"
-      aria-expanded={isOpen}
+      data-state={open ? "open" : "closed"}
+      aria-haspopup="dialog"
+      aria-expanded={open}
       onClick={() => {
         if (disabled) return;
-        if (isMobile) openMobile();
-        else {
-          setQuery("");
-          setDesktopOpen(true);
-        }
+        openSheet();
       }}
       {...(props["aria-label"] ? { "aria-label": props["aria-label"] } : {})}
     >
@@ -326,160 +291,86 @@ export function Select(props: SelectProps) {
       >
         {triggerText || placeholder}
       </span>
-      <ChevronDownIcon className={cn(styles.chevron, isOpen && styles.chevronOpen)} strokeWidth={2} />
+      <ChevronDownIcon className={cn(styles.chevron, open && styles.chevronOpen)} />
     </button>
   );
 
-  // ---- Listbox body (shared) ----
-  const renderBody = (variant: "desktop" | "mobile") => {
-    const isEmpty = filteredOptions.length === 0;
-    const isMobileVariant = variant === "mobile";
-
-    if (isMobileVariant) {
-      const bottomAccessory = getBottomAccessory(isSearchable);
-      return (
-        <div className={cn(styles.sheetBody)}>
-          <MobileOptionList
-            options={filteredOptions}
-            resetKey={optionListKey}
-            emptyText={emptyText}
-            multiple={multiple}
-            isSelected={isSelected}
-            onToggle={handleToggle}
-            searchInputRef={isSearchable ? mobileSearchRef : undefined}
-          />
-          {bottomAccessory === "search" ? (
-            <div className={styles.searchAccessory}>
-              <div className={styles.searchAccessoryBar}>
-                <SearchIcon className={styles.searchAccessoryIcon} />
-                <input
-                  ref={mobileSearchRef}
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder={searchPlaceholder}
-                  className={styles.searchAccessoryInput}
-                  data-rios-search-input
-                  autoComplete="off"
-                  autoCorrect="off"
-                  autoCapitalize="off"
-                  spellCheck={false}
-                />
-                {query ? (
-                  <button
-                    type="button"
-                    aria-label="Clear search"
-                    data-rios-clear-search
-                    onPointerDown={(event) => event.preventDefault()}
-                    onClick={() => {
-                      setQuery("");
-                      mobileSearchRef.current?.focus();
-                    }}
-                    className={styles.clearBtn}
-                  >
-                    <XIcon className={styles.clearIcon} />
-                  </button>
-                ) : null}
-              </div>
-            </div>
-          ) : (
-            <div className={styles.safeAreaSpacer} aria-hidden="true" />
-          )}
-        </div>
-      );
-    }
-
+  // ---- Listbox body ----
+  const renderBody = () => {
+    const bottomAccessory = getBottomAccessory(isSearchable);
     return (
-      <div className={styles.desktopBody}>
-        {isSearchable && (
-          <div className={styles.desktopSearchBar}>
-            <SearchIcon className={styles.searchIcon} />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={searchPlaceholder}
-              className={styles.searchInput}
-              data-rios-search-input
-              autoComplete="off"
-              autoCorrect="off"
-              autoCapitalize="off"
-              spellCheck={false}
-            />
+      <div className={cn(styles.sheetBody)}>
+        <OptionList
+          options={filteredOptions}
+          resetKey={optionListKey}
+          emptyText={emptyText}
+          multiple={multiple}
+          isSelected={isSelected}
+          onToggle={handleToggle}
+          searchInputRef={isSearchable ? searchRef : undefined}
+        />
+        {bottomAccessory === "search" ? (
+          <div className={styles.searchAccessory}>
+            <div className={styles.searchAccessoryBar}>
+              <SearchIcon className={styles.searchAccessoryIcon} />
+              <input
+                ref={searchRef}
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={searchPlaceholder}
+                className={styles.searchAccessoryInput}
+                data-rios-search-input
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck={false}
+              />
+              {query ? (
+                <button
+                  type="button"
+                  aria-label="Clear search"
+                  data-rios-clear-search
+                  onPointerDown={(event) => event.preventDefault()}
+                  onClick={() => {
+                    setQuery("");
+                    searchRef.current?.focus();
+                  }}
+                  className={styles.clearBtn}
+                >
+                  <XIcon className={styles.clearIcon} />
+                </button>
+              ) : null}
+            </div>
           </div>
+        ) : (
+          <div className={styles.safeAreaSpacer} aria-hidden="true" />
         )}
-        {/* Scroll region — relative wrapper holds the iOS-style edge shadows
-            (they must sit OUTSIDE the scrolling element so they don't scroll).
-            Mobile uses a viewport-based maxheight so the list scrolls
-            independently of the sheet's content-driven height. */}
-        <div className={styles.desktopScrollWrap}>
-          <div
-            className={cn(styles.scroll, styles.desktopScroll)}
-            role="listbox"
-            aria-multiselectable={multiple || undefined}
-          >
-            {isEmpty ? (
-              <p className={styles.emptyText}>{emptyText}</p>
-            ) : (
-              filteredOptions.map((o) => (
-                <OptionRow
-                  key={o.value}
-                  option={o}
-                  selected={isSelected(o.value)}
-                  onToggle={handleToggle}
-                />
-              ))
-            )}
-          </div>
-          {/* iOS-native-style edge fade: subtle shadow at top & bottom edges
-              to signal a scrollable region. Pure CSS, no scroll listeners. */}
-          <div className={styles.edgeTop} />
-          <div className={styles.edgeBottom} />
-        </div>
       </div>
     );
   };
 
   return (
     <>
-      {/* Desktop: popover dropdown */}
-      <PopoverPrimitive.Root open={desktopOpen} onOpenChange={setDesktopOpen}>
-        <PopoverPrimitive.Anchor asChild>{trigger}</PopoverPrimitive.Anchor>
-        {mountPolicy.renderDesktopBody ? (
-          <PopoverPrimitive.Portal>
-            <PopoverPrimitive.Content
-              sideOffset={4}
-              align="start"
-              side="bottom"
-              className={cn(styles.popoverContent, contentClassName)}
-            >
-              {renderBody("desktop")}
-            </PopoverPrimitive.Content>
-          </PopoverPrimitive.Portal>
-        ) : null}
-      </PopoverPrimitive.Root>
-
-      {/* Mobile: pure CSS bottom-sheet */}
-      {mountPolicy.renderMobileSheet && (
-        <MobileSheet
-          open={mobileOpen}
-          onDismiss={multiple ? cancelMulti : closeMobile}
-          onMountedChange={setSheetMounted}
-          title={sheetTitle}
-          multiple={multiple}
-          onConfirm={multiple ? commitMulti : closeMobile}
-          onCancel={multiple ? cancelMulti : closeMobile}
-          confirmLabel={multiple ? tSet : undefined}
-          cancelLabel={tCancel}
-          doneLabel={tDone}
-          keepBodyMounted={mountPolicy.keepMobileBodyMounted}
-        >
-          {renderBody("mobile")}
-        </MobileSheet>
-      )}
+      {trigger}
+      <Sheet
+        open={open}
+        onDismiss={multiple ? cancelMulti : close}
+        onMountedChange={setSheetMounted}
+        title={sheetTitle}
+        multiple={multiple}
+        onConfirm={multiple ? commitMulti : close}
+        onCancel={multiple ? cancelMulti : close}
+        confirmLabel={multiple ? tSet : undefined}
+        cancelLabel={tCancel}
+        doneLabel={tDone}
+      >
+        {renderBody()}
+      </Sheet>
     </>
   );
 }
 
-function MobileOptionList({
+function OptionList({
   options,
   resetKey,
   emptyText,
@@ -554,10 +445,10 @@ function MobileOptionList({
   const visibleOptions = options.slice(range.startIndex, range.endIndex);
 
   return (
-    <div className={styles.mobileListWrap}>
+    <div className={styles.listWrap}>
       <div
         ref={scrollerRef}
-        className={cn(styles.mobileList, styles.sheetScroll)}
+        className={cn(styles.list, styles.listScroll)}
         role="listbox"
         aria-multiselectable={multiple || undefined}
         onPointerDownCapture={(event) => {
@@ -707,7 +598,7 @@ function MobileOptionList({
         }}
       >
         {options.length === 0 ? (
-          <p className={styles.mobileEmptyText}>{emptyText}</p>
+          <p className={styles.emptyText}>{emptyText}</p>
         ) : (
           <div className={styles.virtualTrack} style={{ height: range.totalHeight }}>
             <div
@@ -722,7 +613,6 @@ function MobileOptionList({
                     option={option}
                     selected={isSelected(option.value)}
                     onToggle={onToggle}
-                    mobile
                     position={optionIndex + 1}
                     setSize={options.length}
                   />
@@ -732,18 +622,18 @@ function MobileOptionList({
           </div>
         )}
       </div>
-      <div className={styles.mobileEdgeTop} />
+      <div className={styles.listEdgeTop} />
     </div>
   );
 }
 
 /**
- * MobileSheet — keyboard-aware iOS-style selection modal.
+ * Sheet — keyboard-aware iOS-style selection modal.
  *
- * The shell stays mounted on mobile; its content remains present through the
- * close transition. Body scroll lock, ESC and backdrop dismissal are included.
+ * The shell stays mounted; its content remains present through the close
+ * transition. Body scroll lock, ESC and backdrop dismissal are included.
  */
-function MobileSheet({
+function Sheet({
   open,
   onDismiss,
   onMountedChange,
@@ -754,8 +644,7 @@ function MobileSheet({
   onCancel,
   confirmLabel,
   cancelLabel,
-  doneLabel,
-  keepBodyMounted
+  doneLabel
 }: {
   open: boolean;
   onDismiss: () => void;
@@ -768,7 +657,6 @@ function MobileSheet({
   confirmLabel?: string;
   cancelLabel?: string;
   doneLabel?: string;
-  keepBodyMounted: boolean;
 }) {
   const sheetRef = React.useRef<HTMLDivElement>(null);
   const optionGestureActiveRef = React.useRef(false);
@@ -796,10 +684,10 @@ function MobileSheet({
     };
   }, []);
 
-  // The sheet stays in the DOM permanently (when isMobile). `open` drives the
-  // slide via CSS classes — NO mount cycle, so open/close are instant.
-  // `displaying` lags the close by the slide-out duration so the parent keeps
-  // showing the draft while the sheet is still visually sliding away.
+  // The sheet stays in the DOM permanently. `open` drives the slide via CSS
+  // classes — NO mount cycle, so open/close are instant. `displaying` lags the
+  // close by the slide-out duration so the parent keeps showing the draft
+  // while the sheet is still visually sliding away.
   const [displaying, setDisplaying] = React.useState(open);
   const present = open || displaying;
 
@@ -808,7 +696,7 @@ function MobileSheet({
       setDisplaying(true); // open → show draft immediately
     } else {
       // close → keep draft until slide-out finishes, then drop it
-      const t = window.setTimeout(() => setDisplaying(false), MOBILE_SHEET_TRANSITION_MS);
+      const t = window.setTimeout(() => setDisplaying(false), SHEET_TRANSITION_MS);
       return () => window.clearTimeout(t);
     }
   }, [open]);
@@ -980,7 +868,7 @@ function MobileSheet({
             className={cn(styles.iconBtnRound, styles.closeBtn)}
             data-rios-cancel
           >
-            <XIcon className={styles.closeIcon} strokeWidth={2.2} />
+            <XIcon className={styles.closeIcon} />
           </button>
           <span className={styles.sheetTitle}>
             {title}
@@ -993,18 +881,13 @@ function MobileSheet({
               className={cn(styles.iconBtnRound, styles.confirmBtn)}
               data-rios-confirm
             >
-              <CheckIcon className={styles.confirmIcon} strokeWidth={2.25} />
+              <CheckIcon className={styles.confirmIcon} />
             </button>
           ) : (
             <span className={styles.confirmSpacer} aria-hidden="true" />
           )}
         </div>
-        <div className={cn(styles.sheetBody)}>
-          {/* Keep the virtualized body warm while the sheet is offscreen.
-              Only a small row window is mounted, so this avoids concentrating
-              list mount + measurement work in the user's click frame. */}
-          {keepBodyMounted || present ? children : null}
-        </div>
+        <div className={cn(styles.sheetBody)}>{children}</div>
       </div>
     </div>
   );
@@ -1015,21 +898,19 @@ function MobileSheet({
  *
  * iOS-native selected state: the row label turns iOS blue and the trailing
  * indicator becomes a filled circle (accent fill + white checkmark) instead of
- * an outline glyph. `data-rios-option-value` is always present (desktop +
- * mobile) so agent drivers can locate any row by value.
+ * an outline glyph. `data-rios-option-value` is always present so agent drivers
+ * can locate any row by value.
  */
 const OptionRow = React.memo(function OptionRow({
   option,
   selected,
   onToggle,
-  mobile = false,
   position,
   setSize
 }: {
   option: SelectOption;
   selected: boolean;
   onToggle: (val: string) => void;
-  mobile?: boolean;
   position?: number;
   setSize?: number;
 }) {
@@ -1050,8 +931,8 @@ const OptionRow = React.memo(function OptionRow({
       onClick={() => onToggle(option.value)}
       className={cn(
         styles.option,
-        mobile ? styles.optionMobile : styles.optionDesktop,
-        selected && (mobile ? styles.optionMobileSelected : styles.optionDesktopSelected),
+        styles.optionRow,
+        selected && styles.optionRowSelected,
         option.disabled && styles.optionDisabled
       )}
     >
@@ -1068,8 +949,8 @@ const OptionRow = React.memo(function OptionRow({
           slot otherwise so labels stay aligned. */}
       {selected ? (
         <span className={styles.checkWrap} aria-hidden="true">
-          <span className={cn(styles.checkCircle, mobile ? styles.checkCircleMobile : styles.checkCircleDesktop)} />
-          <CheckIcon className={styles.checkGlyph} strokeWidth={3} />
+          <span className={styles.checkCircle} />
+          <CheckIcon className={styles.checkGlyph} />
         </span>
       ) : (
         <span className={styles.checkSpacer} aria-hidden="true" />

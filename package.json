@@ -54,11 +54,7 @@
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
-  "dependencies": {
-    "clsx": "^2.1.1",
-    "lucide-react": "^1.14.0",
-    "radix-ui": "^1.4.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",

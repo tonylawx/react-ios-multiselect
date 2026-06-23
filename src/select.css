@@ -18,28 +18,24 @@
   --rios-color-text: #1d2038;
   --rios-color-muted: #7b8190;
   --rios-color-line: rgba(26, 34, 56, 0.1);
-  --rios-color-selected: #0a84ff;        /* iOS blue: selected text + mobile checkmark */
+  --rios-color-selected: #0a84ff;        /* iOS blue: selected text + checkmark */
   --rios-color-accent: #0a84ff;          /* iOS blue: confirm button, active accents */
   --rios-color-trigger-bg: #fcfbf8;
   --rios-color-sheet-bg: #f7f7f9;
   --rios-color-row-active: rgba(0, 0, 0, 0.035);
-  --rios-color-desktop-row-active: rgba(29, 32, 56, 0.05);
   --rios-color-hairline: rgba(60, 60, 67, 0.29); /* iOS standard list separator */
 
   /* shadows */
-  --rios-shadow: 0 24px 60px rgba(23, 29, 45, 0.12);
   --rios-shadow-sheet: 0 18px 70px rgba(15, 23, 42, 0.28);
 
   /* radii */
   --rios-radius-trigger: 18px;
-  --rios-radius-popover: 16px;
   --rios-radius-sheet: 32px;
 
   /* typography / layout (iOS Settings app defaults) */
   --rios-font-size-body: 17px;           /* iOS body */
   --rios-font-size-description: 13px;    /* iOS secondary */
-  --rios-row-height-mobile: 58px;        /* ~44pt @ typical DPI */
-  --rios-row-height-desktop: 44px;
+  --rios-row-height: 58px;               /* ~44pt @ typical DPI */
   --rios-hairline-inset: 16px;           /* separator left inset */
 
   /* motion */
@@ -47,20 +43,6 @@
 
   /* iOS-native filled checkmark sizing */
   --rios-check-size: 22px;
-}
-
-/* ------------------------------------------------------------------ */
-/* Momentum scrolling + touch tuning                                   */
-/* ------------------------------------------------------------------ */
-.rios-scroll {
-  -webkit-overflow-scrolling: touch;
-  -webkit-tap-highlight-color: transparent;
-  overscroll-behavior: contain;
-}
-
-.rios-sheet-scroll {
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
 }
 
 /* ------------------------------------------------------------------ */
@@ -72,25 +54,18 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  height: 44px;
+  height: 48px;
   padding: 0 16px;
   border: 1px solid var(--rios-color-line);
   border-radius: var(--rios-radius-trigger);
   background: var(--rios-color-trigger-bg);
   color: var(--rios-color-text);
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   outline: none;
   cursor: pointer;
   transition: border-color 0.15s ease;
-}
-
-@media (min-width: 640px) {
-  .rios-trigger {
-    height: 48px;
-    border-radius: 18px;
-  }
 }
 
 .rios-trigger:disabled {
@@ -118,8 +93,8 @@
 }
 
 .rios-chevron {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   flex: 0 0 auto;
   color: var(--rios-color-muted);
   opacity: 0.8;
@@ -131,87 +106,7 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Desktop popover body                                               */
-/* ------------------------------------------------------------------ */
-.rios-desktop-body {
-  display: flex;
-  max-height: 320px;
-  flex-direction: column;
-}
-
-.rios-desktop-search-bar {
-  display: flex;
-  height: 44px;
-  flex: 0 0 auto;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  border-bottom: 1px solid var(--rios-color-line);
-}
-
-.rios-search-icon {
-  width: 16px;
-  height: 16px;
-  flex: 0 0 auto;
-  opacity: 0.5;
-}
-
-.rios-search-input {
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  font-size: 16px;
-  color: var(--rios-color-text);
-  outline: none;
-  border: none;
-}
-
-.rios-search-input::placeholder {
-  color: var(--rios-color-muted);
-}
-
-.rios-desktop-scroll-wrap {
-  position: relative;
-  min-height: 0;
-  max-height: 288px;
-  flex: 1 1 0%;
-}
-
-.rios-desktop-scroll {
-  max-height: 288px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 4px;
-}
-
-.rios-edge-top,
-.rios-edge-bottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 16px;
-  pointer-events: none;
-}
-
-.rios-edge-top {
-  top: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.06), transparent);
-}
-
-.rios-edge-bottom {
-  bottom: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.06), transparent);
-}
-
-.rios-empty-text {
-  padding: 24px 0;
-  text-align: center;
-  font-size: 14px;
-  color: var(--rios-color-muted);
-}
-
-/* ------------------------------------------------------------------ */
-/* Option rows (shared desktop + mobile)                              */
+/* Option rows — full-width iOS Settings row with hairline separator  */
 /* ------------------------------------------------------------------ */
 .rios-option {
   display: flex;
@@ -226,34 +121,16 @@
   cursor: pointer;
 }
 
-/* desktop variant — rounded hover card */
-.rios-option-desktop {
-  min-height: var(--rios-row-height-desktop);
-  padding: 10px 12px;
-  border-radius: 12px;
-  color: var(--rios-color-text);
-}
-
-.rios-option-desktop:active {
-  background: var(--rios-color-desktop-row-active);
-}
-
-/* iOS-native: selected row text turns accent blue */
-.rios-option-desktop-selected {
-  color: var(--rios-color-selected);
-}
-
-/* mobile variant — full-width iOS Settings row with hairline separator */
-.rios-option-mobile {
-  min-height: var(--rios-row-height-mobile);
-  height: var(--rios-row-height-mobile);
+.rios-option-row {
+  min-height: var(--rios-row-height);
+  height: var(--rios-row-height);
   padding: 0 4px;
   position: relative;
   color: var(--rios-color-text);
 }
 
 /* iOS hairline separator, inset from the leading edge */
-.rios-option-mobile::after {
+.rios-option-row::after {
   content: "";
   position: absolute;
   left: var(--rios-hairline-inset);
@@ -263,12 +140,12 @@
   background: var(--rios-color-hairline);
 }
 
-.rios-option-mobile:active {
+.rios-option-row:active {
   background: var(--rios-color-row-active);
 }
 
 /* iOS-native: selected row text turns accent blue */
-.rios-option-mobile-selected {
+.rios-option-row-selected {
   color: var(--rios-color-selected);
 }
 
@@ -315,14 +192,7 @@
   position: absolute;
   inset: 0;
   border-radius: 9999px;
-}
-
-.rios-check-circle-mobile {
   background: var(--rios-color-accent);
-}
-
-.rios-check-circle-desktop {
-  background: var(--rios-color-selected);
 }
 
 .rios-check-glyph {
@@ -341,8 +211,15 @@
   flex: 0 0 auto;
 }
 
+.rios-empty-text {
+  padding: 32px 0;
+  text-align: center;
+  font-size: 15px;
+  color: var(--rios-color-muted);
+}
+
 /* ------------------------------------------------------------------ */
-/* Mobile sheet                                                       */
+/* Sheet                                                              */
 /* ------------------------------------------------------------------ */
 .rios-overlay {
   position: fixed;
@@ -480,9 +357,9 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Mobile option list (virtualized)                                   */
+/* Virtualized option list                                            */
 /* ------------------------------------------------------------------ */
-.rios-mobile-list-wrap {
+.rios-list-wrap {
   position: relative;
   min-height: 0;
   flex: 1 1 0%;
@@ -490,14 +367,18 @@
   padding: 0 20px;
 }
 
-.rios-mobile-list {
+.rios-list {
   height: 100%;
   min-height: 0;
   touch-action: pan-y;
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+
+.rios-list-scroll {
   -webkit-overflow-scrolling: touch;
   -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: contain;
 }
 
 .rios-virtual-track {
@@ -511,7 +392,7 @@
   top: 0;
 }
 
-.rios-mobile-edge-top {
+.rios-list-edge-top {
   position: absolute;
   left: 20px;
   right: 20px;
@@ -521,15 +402,8 @@
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), transparent);
 }
 
-.rios-mobile-empty-text {
-  padding: 32px 0;
-  text-align: center;
-  font-size: 14px;
-  color: var(--rios-color-muted);
-}
-
 /* ------------------------------------------------------------------ */
-/* Mobile bottom search accessory                                     */
+/* Bottom search accessory                                            */
 /* ------------------------------------------------------------------ */
 .rios-search-accessory {
   position: relative;
@@ -600,16 +474,4 @@
 .rios-safe-area-spacer {
   height: calc(16px + env(safe-area-inset-bottom));
   flex: 0 0 auto;
-}
-
-.rios-popover-content {
-  z-index: 220;
-  overflow: hidden;
-  border-radius: var(--rios-radius-popover);
-  border: 1px solid var(--rios-color-line);
-  background: rgba(255, 255, 255, 0.98);
-  color: var(--rios-color-text);
-  box-shadow: var(--rios-shadow);
-  /* Width follows the Radix trigger width via inline --radix var */
-  min-width: var(--radix-popover-trigger-width);
 }

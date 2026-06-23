@@ -1,8 +1,10 @@
 # react-ios-multiselect
 
-A native iOS-feeling, responsive React `<Select>` — single **and** multi-select in one component, with a **keyboard-aware mobile bottom sheet**, **virtualized rows** (2,000+ options scroll smoothly), **iOS-native selected state** (blue text + filled checkmark), **draft/commit multi-select**, and a desktop **Radix Popover** fallback.
+A native iOS-feeling React `<Select>` — single **and** multi-select in one component, with a **keyboard-aware bottom sheet**, **virtualized rows** (2,000+ options scroll smoothly), **iOS-native selected state** (blue text + filled checkmark), and **draft/commit multi-select**.
 
-On mobile it behaves like iOS's native picker: tap a row to toggle it, and **the keyboard stays open while you search and select** (a notoriously fiddly iOS WebKit behavior this handles correctly). Every interactive element carries a stable `data-rios-*` hook so AI agents / Playwright can drive it reliably.
+Tap a row to toggle it, and **the keyboard stays open while you search and select** (a notoriously fiddly iOS WebKit behavior this handles correctly). Every interactive element carries a stable `data-rios-*` hook so AI agents / Playwright can drive it reliably.
+
+**Zero runtime dependencies** beyond `react` / `react-dom` (peer). No UI library, no icon pack, no class-merging utility — icons are inline SVG, classes are a tiny hand-written `cn()`. Mobile-first: the trigger opens a bottom sheet (no desktop popover path).
 
 > **For AI agents:** read [`docs/components.md`](./docs/components.md) (and `llms.txt`) for the full machine-readable spec — props, selectors, behaviors, and copy-paste snippets.
 
@@ -25,16 +27,13 @@ import "react-ios-multiselect/style.css";
 
 ## Why
 
-Most React select components are either (a) desktop-only popovers that feel broken on mobile, or (b) wrappers around the native `<select multiple>`, which has no styling control and a poor multi-select UX on touch. This component gives you:
-
-- **Native-feeling mobile sheet** — slides up from the bottom, sits above the keyboard, momentum-scrolls, dismissible by backdrop / ESC / header button.
+- **Native-feeling sheet** — slides up from the bottom, sits above the keyboard, momentum-scrolls, dismissible by backdrop / ESC / header button.
 - **iOS-native selected state** — selected rows turn iOS-blue with a filled circle checkmark (white check on blue), exactly like iOS Settings, not a generic outline glyph.
 - **Keyboard-aware** — when the search field is focused, tapping rows toggles them **without dismissing the keyboard**, so users can search → select → keep typing. Implemented at the pointerdown level to defeat iOS WebKit's focus-transfer-then-collapse behavior.
 - **Virtualized** — only the visible window + overscan of rows is mounted, so 2,000 options scroll as smoothly as 20.
-- **Draft-then-commit multi-select** — on mobile, toggles mutate a local draft; the blue ✓ button commits, ✕ discards. Desktop commits immediately. Single-select commits on tap.
-- **Single component, responsive** — auto-detects mobile (≤ 640px by default) and renders the sheet; desktop gets a Radix Popover. No prop switching.
+- **Draft-then-commit multi-select** — toggles mutate a local draft; the blue ✓ button commits, ✕ discards. Single-select commits on tap.
 - **Agent-friendly** — stable `data-rios-*` selectors on every part + full ARIA semantics, so Playwright/cursor agents can locate, drive, and assert reliably.
-- **Zero Tailwind dependency** — plain CSS with `--rios-*` custom properties for theming.
+- **Zero deps** — only `react`/`react-dom` as peers. Plain CSS with `--rios-*` custom properties for theming.
 
 ## Install
 
@@ -115,14 +114,12 @@ const options = [
 | `searchPlaceholder`   | `string`                          | —                    | Search field placeholder. |
 | `emptyText`           | `string`                          | —                    | Empty-results message. |
 | `disabled`            | `boolean`                         | `false`              | Disables the trigger. |
-| `mobileBreakpoint`    | `number`                          | `640`                | Max viewport width (px) treated as mobile. |
-| `mobileTitle`         | `string`                          | `placeholder`        | Mobile sheet header title. |
+| `mobileTitle`         | `string`                          | `placeholder`        | Sheet header title. |
 | `mobileSetLabel`      | `string`                          | `"Set"`              | Multi-select confirm button `aria-label`. |
 | `mobileCancelLabel`   | `string`                          | `"Cancel"`           | Cancel button `aria-label`. |
 | `mobileDoneLabel`     | `string`                          | `"Done"`             | Single-select close button `aria-label`. |
 | `selectedCountLabel`  | `(count: number) => string`       | `${count} selected`  | Trigger summary when > 2 selected (multi). |
 | `className`           | `string`                          | —                    | Extra class on the trigger. |
-| `contentClassName`    | `string`                          | —                    | Extra class on the desktop popover content. |
 | `aria-label`          | `string`                          | —                    | Accessible label for the trigger. |
 
 ## Styling / theming
@@ -134,14 +131,13 @@ All colors, typography, and motion are CSS custom properties with defaults decla
   --rios-color-text: #1d2038;          /* trigger + sheet text */
   --rios-color-muted: #7b8190;         /* placeholders, descriptions */
   --rios-color-line: rgba(26,34,56,.1);/* borders */
-  --rios-color-accent: #0a84ff;        /* iOS blue: confirm btn, mobile checkmark */
-  --rios-color-selected: #0a84ff;      /* selected row text + desktop checkmark */
+  --rios-color-accent: #0a84ff;        /* iOS blue: confirm btn, checkmark */
+  --rios-color-selected: #0a84ff;      /* selected row text */
   --rios-color-hairline: rgba(60,60,67,.29); /* iOS list separator */
   --rios-font-size-body: 17px;         /* iOS body text */
-  --rios-row-height-mobile: 58px;      /* ~44pt iOS row */
+  --rios-row-height: 58px;             /* ~44pt iOS row */
   --rios-easing-spring: cubic-bezier(0.32,0.72,0,1);
   --rios-check-size: 22px;             /* filled checkmark diameter */
-  --rios-shadow: 0 24px 60px rgba(0,0,0,.12);
   --rios-shadow-sheet: 0 18px 70px rgba(0,0,0,.28);
   --rios-radius-sheet: 32px;
 }
@@ -156,14 +152,14 @@ Every interactive element carries a stable `data-rios-*` attribute so Playwright
 | Selector | What | Notes |
 |---|---|---|
 | `[data-rios-select-trigger]` | The trigger button | `data-state="open\|closed"` reflects open state |
-| `[data-rios-option-value="<value>"]` | Any option row | `data-selected="true\|false"`; present on both desktop + mobile |
-| `[data-rios-sheet]` | The mobile sheet | `data-open="true\|false"` |
-| `[data-rios-overlay]` | The mobile overlay/backdrop wrapper | `data-open` |
+| `[data-rios-option-value="<value>"]` | Any option row | `data-selected="true\|false"` |
+| `[data-rios-sheet]` | The sheet | `data-open="true\|false"` |
+| `[data-rios-overlay]` | The overlay/backdrop wrapper | `data-open` |
 | `[data-rios-backdrop]` | The dismiss-on-tap backdrop | |
-| `[data-rios-search-input]` | The search field (desktop or mobile) | |
+| `[data-rios-search-input]` | The search field | |
 | `[data-rios-clear-search]` | The clear-search button | |
-| `[data-rios-confirm]` | The blue ✓ commit button (multi, mobile) | |
-| `[data-rios-cancel]` | The ✕ close button (mobile) | |
+| `[data-rios-confirm]` | The blue ✓ commit button (multi) | |
+| `[data-rios-cancel]` | The ✕ close button | |
 
 Example (Playwright):
 
@@ -175,7 +171,7 @@ await expect(page.locator('[data-rios-option-value="AAPL"]'))
 await page.click('[data-rios-confirm]');
 ```
 
-Full ARIA: `role=listbox` / `role=option` / `aria-selected` / `aria-multiselectable` / `aria-posinset` / `aria-setsize`, and each option also exposes a readable `aria-label` (label, or "label — description").
+Full ARIA: `role=dialog` (sheet) / `role=listbox` / `role=option` / `aria-selected` / `aria-multiselectable` / `aria-posinset` / `aria-setsize`, and each option also exposes a readable `aria-label` (label, or "label — description").
 
 ## How the iOS keyboard behavior works
 
@@ -187,13 +183,13 @@ This component calls `preventDefault()` in the `pointerdown` **capture** phase w
 
 ```bash
 bun install
-bun test          # 22 unit tests (pure logic: virtualization, layout, interaction)
+bun test          # 20 unit tests (pure logic: virtualization, layout, interaction)
 bun run typecheck
 bun run build     # → dist/ (ESM + CJS + d.ts + select.css)
 cd demo && bun dev   # Vite playground at localhost:5173
 ```
 
-The pure logic (virtualization range, mobile sheet layout, tap gesture, mount policy) is fully unit-tested and framework-agnostic — exported for advanced consumers who want to build a custom UI on the same primitives.
+The pure logic (virtualization range, sheet layout, tap gesture) is fully unit-tested and framework-agnostic — exported for advanced consumers who want to build a custom UI on the same primitives.
 
 ## License
 

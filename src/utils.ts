@@ -1,9 +1,13 @@
-import { clsx, type ClassValue } from "clsx";
-
 /**
- * Tiny className combiner. Built on clsx only — no tailwind-merge, since this
- * package ships plain CSS Modules rather than Tailwind utility classes.
+ * Tiny className combiner. Joins truthy class values (string | false | null |
+ * undefined). Zero dependencies — no clsx, no tailwind-merge.
  */
-export function cn(...inputs: ClassValue[]): string {
-  return clsx(inputs);
+export function cn(...inputs: Array<string | false | null | undefined>): string {
+  let out = "";
+  for (const v of inputs) {
+    if (v) {
+      out += out ? " " + v : v;
+    }
+  }
+  return out;
 }
