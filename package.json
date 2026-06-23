@@ -49,7 +49,7 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
-    "prepublishOnly": "bun run build"
+    "release": "bun run typecheck && bun test && bun run build && npm publish --access public"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
