@@ -85,6 +85,43 @@ to this codebase.
 Register recurring agents in [`.github/ai-contributors.yml`](./.github/ai-contributors.yml)
 so disclosures can be validated against a known list.
 
+## Releasing
+
+Releases are automated: push a version tag and CI publishes to npm.
+
+### One-time setup (maintainer)
+
+1. Create a npm **automation token** that bypasses 2FA:
+   - npm → Access Tokens → **Generate New Token** → **Granular Access Token**
+     (or classic **Automation** token).
+   - Permissions: **Read and write** for this package (or `react-ios-multiselect`
+     specifically). For a first publish, allow publishing the not-yet-existing
+     name.
+   - Granular tokens can be set to **bypass 2FA for automation** — that's what
+     lets CI publish without an interactive OTP.
+2. Add it as a repository secret named `NPM_TOKEN`:
+   GitHub → repo **Settings → Secrets and variables → Actions → New repository
+   secret**, name `NPM_TOKEN`, paste the token.
+
+### Cut a release
+
+```bash
+# 1. bump version in package.json (e.g. 0.1.0 → 0.1.1)
+# 2. update CHANGELOG.md
+# 3. commit, tag, push
+git commit -am "chore(release): v0.1.1"
+git tag v0.1.1
+git push origin main --tags
+```
+
+Pushing the tag triggers `.github/workflows/release.yml`, which verifies the
+tag matches `package.json`, runs typecheck + tests, builds, and runs
+`npm publish --provenance`. No manual `npm publish`, no OTP.
+
+> Local fallback (if you ever need to publish by hand):
+> `bun run release` — typecheck + test + build + `npm publish`. You'll need an
+> interactive OTP unless your token bypasses 2FA.
+
 ## Reporting problems
 
 Open an issue with the `bug` or `enhancement` label. For agent-facing tasks,
