@@ -54,6 +54,17 @@ declare it.** This is enforced by CI (`.github/workflows/ai-pr-guard.yml`):
 a PR with the `ai-authored` label whose description is missing the disclosure
 block will fail the check.
 
+:::note First-time repo setup
+The guard only activates on PRs that carry the `ai-authored` label, and the
+docs workflow needs GitHub Pages enabled with the "GitHub Actions" source. On a
+fresh repo neither exists yet, so the guard silently skips. Run the one-time
+setup script to create both:
+
+```bash
+./scripts/setup.sh   # creates the ai-authored label + enables Pages
+```
+:::
+
 The disclosure lives in the PR body (see `PULL_REQUEST_TEMPLATE.md`) and
 contains:
 

@@ -12,7 +12,33 @@ Tap a row to toggle it, and **the keyboard stays open while you search and selec
 
 **Zero runtime dependencies** beyond `react` / `react-dom` (peer). No UI library, no icon pack, no class-merging utility — icons are inline SVG, classes are a tiny hand-written `cn()`. Mobile-first: the trigger opens a bottom sheet (no desktop popover path).
 
-> **For AI agents:** read [`docs/components.md`](./docs/components.md) (and `llms.txt`) for the full machine-readable spec — props, selectors, behaviors, and copy-paste snippets.
+## 🤖 For AI agents — copy this
+
+> Paste this block to an agent and it can integrate the component with no further context.
+
+````txt
+Use the npm package `react-ios-multiselect` to add a select control. It is
+mobile-first, has ZERO runtime dependencies (only react/react-dom peers), and
+ships its own CSS — do NOT add any UI library, icon pack, or CSS framework.
+
+1. Install: `bun add react-ios-multiselect`  (peer: react >= 18)
+2. Import the stylesheet ONCE at the app root:
+     import "react-ios-multiselect/style.css";
+3. Render — single-select:
+     <Select value={v} onValueChange={setV} options={opts} />
+   multi-select (same component, add `multiple`):
+     <Select multiple value={arr} onValueChange={setArr} options={opts} placeholder="Pick…" />
+4. options shape: { value: string; label: string; description?: string; disabled?: boolean; icon?: ReactNode | ((o)=>ReactNode) }
+5. In tests/automation, locate with these stable selectors (never text/position):
+     [data-rios-select-trigger]            (data-state="open"|"closed")
+     [data-rios-option-value="<value>"]    (data-selected="true"|"false")
+     [data-rios-confirm]  [data-rios-cancel]  [data-rios-search-input]
+6. Theme by overriding --rios-* CSS variables on :root (e.g. --rios-color-accent).
+7. Full docs + live demo: https://tonylawx.github.io/react-ios-multiselect/
+````
+
+Contributing as an agent? Read [`AGENTS.md`](./AGENTS.md) — the `ai-pr-guard` CI
+enforces an AI contributor disclosure on `ai-authored` PRs.
 
 ```tsx
 import { Select } from "react-ios-multiselect";
