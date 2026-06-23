@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
 
-import { getAAPLSelectMountPolicy } from "../src/aapl-select-performance";
+import { getMountPolicy } from "../src/select-performance";
 
-describe("AAPLSelect mount policy", () => {
+describe("Select mount policy", () => {
   test("mobile keeps only the virtualized mobile body warm", () => {
-    expect(getAAPLSelectMountPolicy(true)).toEqual({
+    expect(getMountPolicy(true)).toEqual({
       renderDesktopBody: false,
       renderMobileSheet: true,
       keepMobileBodyMounted: true
@@ -12,7 +12,7 @@ describe("AAPLSelect mount policy", () => {
   });
 
   test("desktop does not construct the hidden mobile list", () => {
-    expect(getAAPLSelectMountPolicy(false)).toEqual({
+    expect(getMountPolicy(false)).toEqual({
       renderDesktopBody: true,
       renderMobileSheet: false,
       keepMobileBodyMounted: false

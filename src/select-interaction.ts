@@ -1,8 +1,8 @@
-export type AAPLSelectBottomAccessory = "search" | "safe-area-spacer";
+export type BottomAccessory = "search" | "safe-area-spacer";
 
-const AAPL_SELECT_OPTION_TAP_SLOP_PX = 10;
+const OPTION_TAP_SLOP_PX = 10;
 
-export type AAPLSelectOptionGesture = {
+export type OptionGesture = {
   pointerId: number;
   value: string;
   startX: number;
@@ -11,19 +11,17 @@ export type AAPLSelectOptionGesture = {
   moved: boolean;
 };
 
-export function getAAPLSelectBottomAccessory(
-  searchable: boolean
-): AAPLSelectBottomAccessory {
+export function getBottomAccessory(searchable: boolean): BottomAccessory {
   return searchable ? "search" : "safe-area-spacer";
 }
 
-export function shouldDeferAAPLSelectViewportLayout(
+export function shouldDeferViewportLayout(
   optionGestureActive: boolean
 ): boolean {
   return optionGestureActive;
 }
 
-export function createAAPLSelectOptionGesture({
+export function createOptionGesture({
   pointerId,
   value,
   clientX,
@@ -35,7 +33,7 @@ export function createAAPLSelectOptionGesture({
   clientX: number;
   clientY: number;
   scrollTop: number;
-}): AAPLSelectOptionGesture {
+}): OptionGesture {
   return {
     pointerId,
     value,
@@ -46,24 +44,24 @@ export function createAAPLSelectOptionGesture({
   };
 }
 
-export function moveAAPLSelectOptionGesture({
+export function moveOptionGesture({
   gesture,
   pointerId,
   clientX,
   clientY
 }: {
-  gesture: AAPLSelectOptionGesture;
+  gesture: OptionGesture;
   pointerId: number;
   clientX: number;
   clientY: number;
-}): AAPLSelectOptionGesture {
+}): OptionGesture {
   if (gesture.pointerId !== pointerId || gesture.moved) return gesture;
 
   const deltaX = clientX - gesture.startX;
   const deltaY = clientY - gesture.startY;
   if (
     deltaX * deltaX + deltaY * deltaY
-    <= AAPL_SELECT_OPTION_TAP_SLOP_PX * AAPL_SELECT_OPTION_TAP_SLOP_PX
+    <= OPTION_TAP_SLOP_PX * OPTION_TAP_SLOP_PX
   ) {
     return gesture;
   }
@@ -71,12 +69,12 @@ export function moveAAPLSelectOptionGesture({
   return { ...gesture, moved: true };
 }
 
-export function shouldActivateAAPLSelectOptionGesture({
+export function shouldActivateOptionGesture({
   gesture,
   pointerId,
   scrollTop
 }: {
-  gesture: AAPLSelectOptionGesture;
+  gesture: OptionGesture;
   pointerId: number;
   scrollTop: number;
 }): boolean {

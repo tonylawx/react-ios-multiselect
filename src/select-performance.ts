@@ -1,4 +1,4 @@
-export type AAPLSelectMountPolicy = {
+export type MountPolicy = {
   renderDesktopBody: boolean;
   renderMobileSheet: boolean;
   keepMobileBodyMounted: boolean;
@@ -10,7 +10,7 @@ export type AAPLSelectMountPolicy = {
  * warming that small row window avoids list mount and measurement work in the
  * user's click frame.
  */
-export function getAAPLSelectMountPolicy(isMobile: boolean): AAPLSelectMountPolicy {
+export function getMountPolicy(isMobile: boolean): MountPolicy {
   return {
     renderDesktopBody: !isMobile,
     renderMobileSheet: isMobile,

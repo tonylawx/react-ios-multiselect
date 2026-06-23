@@ -1,23 +1,20 @@
-export { AAPLSelect, default } from "./aapl-select";
+export { Select, default } from "./select";
 export type {
-  AAPLSelectOption,
-  AAPLSelectBaseProps,
-  AAPLSelectProps,
+  SelectOption,
+  SelectBaseProps,
+  SelectProps,
   SingleProps,
   MultiProps,
-} from "./aapl-select";
+} from "./select";
 export { cn } from "./utils";
 
 // Re-export the pure logic helpers so consumers / advanced users can build
 // their own UI on top of the same primitives (virtualization, layout, etc.).
+export { MOBILE_BREAKPOINT, computeMobileSheetLayout } from "./select-layout";
 export {
-  AAPL_SELECT_MOBILE_BREAKPOINT,
-  computeMobileSheetLayout,
-} from "./aapl-select-layout";
-export {
-  AAPL_SELECT_OPTION_ROW_HEIGHT,
-  AAPL_SELECT_OPTION_OVERSCAN,
+  OPTION_ROW_HEIGHT,
+  OPTION_OVERSCAN,
   computeVirtualOptionRange,
   optionListSignature,
-} from "./aapl-select-virtual";
-export { getAAPLSelectMountPolicy } from "./aapl-select-performance";
+} from "./select-virtual";
+export { getMountPolicy } from "./select-performance";

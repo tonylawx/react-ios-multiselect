@@ -1,4 +1,4 @@
-export const AAPL_SELECT_MOBILE_BREAKPOINT = 640;
+export const MOBILE_BREAKPOINT = 640;
 
 export function computeMobileSheetLayout({
   layoutHeight,

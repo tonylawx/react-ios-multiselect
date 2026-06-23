@@ -41,7 +41,7 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./style.css": "./dist/aapl-select.css",
+    "./style.css": "./dist/select.css",
     "./package.json": "./package.json"
   },
   "scripts": {

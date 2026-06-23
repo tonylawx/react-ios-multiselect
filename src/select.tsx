@@ -4,39 +4,36 @@ import * as React from "react";
 import { Popover as PopoverPrimitive } from "radix-ui";
 import { CheckIcon, ChevronDownIcon, SearchIcon, XIcon } from "lucide-react";
 
+import { MOBILE_BREAKPOINT, computeMobileSheetLayout } from "./select-layout";
 import {
-  AAPL_SELECT_MOBILE_BREAKPOINT,
-  computeMobileSheetLayout
-} from "./aapl-select-layout";
-import {
-  AAPL_SELECT_OPTION_ROW_HEIGHT,
+  OPTION_ROW_HEIGHT,
   computeVirtualOptionRange,
   optionListSignature,
-} from "./aapl-select-virtual";
+} from "./select-virtual";
 import {
-  createAAPLSelectOptionGesture,
-  getAAPLSelectBottomAccessory,
-  moveAAPLSelectOptionGesture,
-  shouldActivateAAPLSelectOptionGesture,
+  createOptionGesture,
+  getBottomAccessory,
+  moveOptionGesture,
+  shouldActivateOptionGesture,
   shouldPreserveSearchFocusOnOptionPointerDown,
-  type AAPLSelectOptionGesture,
-  shouldDeferAAPLSelectViewportLayout
-} from "./aapl-select-interaction";
-import { getAAPLSelectMountPolicy } from "./aapl-select-performance";
+  type OptionGesture,
+  shouldDeferViewportLayout
+} from "./select-interaction";
+import { getMountPolicy } from "./select-performance";
 import { cn } from "./utils";
 import { styles } from "./styles";
 
 const MOBILE_SHEET_TRANSITION_MS = 220;
 
-export type AAPLSelectOption = {
+export type SelectOption = {
   value: string;
   label: string;
   description?: string;
   disabled?: boolean;
 };
 
-export type AAPLSelectBaseProps = {
-  options: readonly AAPLSelectOption[];
+export type SelectBaseProps = {
+  options: readonly SelectOption[];
   placeholder?: string;
   searchPlaceholder?: string;
   emptyText?: string;
@@ -59,22 +56,22 @@ export type AAPLSelectBaseProps = {
   "aria-label"?: string;
 };
 
-export type SingleProps = AAPLSelectBaseProps & {
+export type SingleProps = SelectBaseProps & {
   multiple?: false;
   value: string;
   onValueChange: (value: string) => void;
 };
 
-export type MultiProps = AAPLSelectBaseProps & {
+export type MultiProps = SelectBaseProps & {
   multiple: true;
   value: string[];
   onValueChange: (value: string[]) => void;
 };
 
-export type AAPLSelectProps = SingleProps | MultiProps;
+export type SelectProps = SingleProps | MultiProps;
 
 /**
- * AAPLSelect — responsive select with a native-feeling iOS picker on mobile.
+ * Select — responsive select with a native-feeling iOS picker on mobile.
  *
  * - Desktop: Radix Popover dropdown
  * - Mobile: keyboard-aware modal with draft selection, virtualized rows,
@@ -82,11 +79,18 @@ export type AAPLSelectProps = SingleProps | MultiProps;
  * - Desktop: immediate selection inside a Radix popover
  * - Performance: stable callbacks, memoised filter/labels and windowed rows
  *
- * Styling comes from `aapl-select.module.css` (CSS Modules). Theme via the
- * `--rios-color-*` / `--rios-shadow*` / `--rios-radius-*` CSS variables, which
- * all carry sensible defaults on `:root`.
+ * Single-select (`multiple` omitted/false) and multi-select (`multiple`) share
+ * one component; the prop switches the `value` / `onValueChange` signature and
+ * the mobile commit behavior (immediate vs draft-then-Set).
+ *
+ * Styling comes from `select.css` (global, prefixed `rios-`). Theme via the
+ * `--rios-*` CSS variables, which all carry sensible defaults on `:root`.
+ *
+ * Agent-control surface: stable `data-rios-*` attributes on every interactive
+ * element so Playwright/agent drivers can locate and drive the component
+ * reliably (see docs/components.md).
  */
-export function AAPLSelect(props: AAPLSelectProps) {
+export function Select(props: SelectProps) {
   const {
     options,
     placeholder,
@@ -96,7 +100,7 @@ export function AAPLSelect(props: AAPLSelectProps) {
     className,
     contentClassName,
     disabled,
-    mobileBreakpoint = AAPL_SELECT_MOBILE_BREAKPOINT,
+    mobileBreakpoint = MOBILE_BREAKPOINT,
     mobileTitle,
     mobileSetLabel,
     mobileCancelLabel,
@@ -119,7 +123,8 @@ export function AAPLSelect(props: AAPLSelectProps) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isMobile, setIsMobile] = React.useState(false);
   const [query, setQuery] = React.useState("");
-  const mountPolicy = getAAPLSelectMountPolicy(isMobile);
+  const mountPolicy = getMountPolicy(isMobile);
+  const isOpen = desktopOpen || mobileOpen;
 
   const mobileSearchRef = React.useRef<HTMLInputElement>(null);
 
@@ -262,7 +267,7 @@ export function AAPLSelect(props: AAPLSelectProps) {
   const filteredOptions = React.useMemo(() => {
     if (!isSearchable || !deferredQuery.trim()) return options;
     const q = deferredQuery.toLowerCase();
-    const out: AAPLSelectOption[] = [];
+    const out: SelectOption[] = [];
     for (const o of options) {
       if (
         `${o.label} ${o.value} ${o.description ?? ""}`
@@ -299,8 +304,10 @@ export function AAPLSelect(props: AAPLSelectProps) {
       type="button"
       className={cn(styles.trigger, className)}
       disabled={disabled}
+      data-rios-select-trigger
+      data-state={isOpen ? "open" : "closed"}
       aria-haspopup="listbox"
-      aria-expanded={desktopOpen || mobileOpen}
+      aria-expanded={isOpen}
       onClick={() => {
         if (disabled) return;
         if (isMobile) openMobile();
@@ -319,7 +326,7 @@ export function AAPLSelect(props: AAPLSelectProps) {
       >
         {triggerText || placeholder}
       </span>
-      <ChevronDownIcon className={styles.chevron} strokeWidth={2} />
+      <ChevronDownIcon className={cn(styles.chevron, isOpen && styles.chevronOpen)} strokeWidth={2} />
     </button>
   );
 
@@ -329,7 +336,7 @@ export function AAPLSelect(props: AAPLSelectProps) {
     const isMobileVariant = variant === "mobile";
 
     if (isMobileVariant) {
-      const bottomAccessory = getAAPLSelectBottomAccessory(isSearchable);
+      const bottomAccessory = getBottomAccessory(isSearchable);
       return (
         <div className={cn(styles.sheetBody)}>
           <MobileOptionList
@@ -351,6 +358,7 @@ export function AAPLSelect(props: AAPLSelectProps) {
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder={searchPlaceholder}
                   className={styles.searchAccessoryInput}
+                  data-rios-search-input
                   autoComplete="off"
                   autoCorrect="off"
                   autoCapitalize="off"
@@ -360,6 +368,7 @@ export function AAPLSelect(props: AAPLSelectProps) {
                   <button
                     type="button"
                     aria-label="Clear search"
+                    data-rios-clear-search
                     onPointerDown={(event) => event.preventDefault()}
                     onClick={() => {
                       setQuery("");
@@ -389,6 +398,7 @@ export function AAPLSelect(props: AAPLSelectProps) {
               onChange={(e) => setQuery(e.target.value)}
               placeholder={searchPlaceholder}
               className={styles.searchInput}
+              data-rios-search-input
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
@@ -478,7 +488,7 @@ function MobileOptionList({
   onToggle,
   searchInputRef
 }: {
-  options: readonly AAPLSelectOption[];
+  options: readonly SelectOption[];
   /** When this string changes, the list scrolls back to the top so the user
    *  sees the first match after a search filter or clear. */
   resetKey: string;
@@ -491,7 +501,7 @@ function MobileOptionList({
   const scrollerRef = React.useRef<HTMLDivElement>(null);
   const animationFrameRef = React.useRef<number | null>(null);
   const latestScrollTopRef = React.useRef(0);
-  const optionGestureRef = React.useRef<AAPLSelectOptionGesture | null>(null);
+  const optionGestureRef = React.useRef<OptionGesture | null>(null);
   const preserveSearchFocusRef = React.useRef(false);
   const suppressClickValueRef = React.useRef<string | null>(null);
   const suppressClickUntilRef = React.useRef(0);
@@ -504,7 +514,7 @@ function MobileOptionList({
     if (!scroller) return;
 
     const updateHeight = () => {
-      setViewportHeight(Math.max(AAPL_SELECT_OPTION_ROW_HEIGHT, scroller.clientHeight));
+      setViewportHeight(Math.max(OPTION_ROW_HEIGHT, scroller.clientHeight));
     };
     updateHeight();
 
@@ -557,7 +567,7 @@ function MobileOptionList({
           suppressClickUntilRef.current = 0;
           const target = event.target;
           const optionElement = target instanceof Element
-            ? target.closest<HTMLButtonElement>("[data-aapl-select-option-value]")
+            ? target.closest<HTMLButtonElement>("[data-rios-option-value]")
             : null;
           if (!optionElement || optionElement.disabled) return;
 
@@ -573,7 +583,7 @@ function MobileOptionList({
           // starts to collapse. Far more reliable on iOS WebKit than blurring
           // and re-focusing from pointerup.
           if (shouldPreserveSearchFocusOnOptionPointerDown({
-            optionValue: optionElement.dataset.aaplSelectOptionValue ?? null,
+            optionValue: optionElement.dataset.riosOptionValue ?? null,
             searchFocused
           })) {
             event.preventDefault();
@@ -581,9 +591,9 @@ function MobileOptionList({
           } else {
             preserveSearchFocusRef.current = false;
           }
-          optionGestureRef.current = createAAPLSelectOptionGesture({
+          optionGestureRef.current = createOptionGesture({
             pointerId: event.pointerId,
-            value: optionElement.dataset.aaplSelectOptionValue ?? "",
+            value: optionElement.dataset.riosOptionValue ?? "",
             clientX: event.clientX,
             clientY: event.clientY,
             scrollTop: event.currentTarget.scrollTop
@@ -592,7 +602,7 @@ function MobileOptionList({
         onPointerMoveCapture={(event) => {
           const gesture = optionGestureRef.current;
           if (!gesture || event.pointerType !== "touch") return;
-          optionGestureRef.current = moveAAPLSelectOptionGesture({
+          optionGestureRef.current = moveOptionGesture({
             gesture,
             pointerId: event.pointerId,
             clientX: event.clientX,
@@ -604,7 +614,7 @@ function MobileOptionList({
           optionGestureRef.current = null;
           if (!gesture || event.pointerType !== "touch") return;
 
-          const shouldActivate = shouldActivateAAPLSelectOptionGesture({
+          const shouldActivate = shouldActivateOptionGesture({
             gesture,
             pointerId: event.pointerId,
             scrollTop: event.currentTarget.scrollTop
@@ -649,7 +659,7 @@ function MobileOptionList({
           const target = event.target;
           if (
             target instanceof Element
-            && target.closest("[data-aapl-select-option-value]")
+            && target.closest("[data-rios-option-value]")
           ) {
             searchInputRef?.current?.focus({ preventScroll: true });
           }
@@ -657,9 +667,9 @@ function MobileOptionList({
         onClickCapture={(event) => {
           const target = event.target;
           const optionElement = target instanceof Element
-            ? target.closest<HTMLButtonElement>("[data-aapl-select-option-value]")
+            ? target.closest<HTMLButtonElement>("[data-rios-option-value]")
             : null;
-          const value = optionElement?.dataset.aaplSelectOptionValue;
+          const value = optionElement?.dataset.riosOptionValue;
           const shouldSuppress = Boolean(
             value
             && suppressClickValueRef.current === value
@@ -850,7 +860,7 @@ function MobileSheet({
     const vv = window.visualViewport;
     if (!vv) return;
     const apply = () => {
-      if (shouldDeferAAPLSelectViewportLayout(optionGestureActiveRef.current)) {
+      if (shouldDeferViewportLayout(optionGestureActiveRef.current)) {
         return;
       }
       const activeElement = document.activeElement;
@@ -870,13 +880,13 @@ function MobileSheet({
         keyboardActive
       });
       const vars: Record<string, string | undefined> = {
-        ["--sheet-bottom"]: `${layout.bottom}px`
+        ["--rios-sheet-bottom"]: `${layout.bottom}px`
       };
       if (layout.top != null) {
-        vars["--sheet-top"] = `${layout.top}px`;
+        vars["--rios-sheet-top"] = `${layout.top}px`;
       }
       if (layout.maxHeight != null) {
-        vars["--sheet-max-h"] = `${layout.maxHeight}px`;
+        vars["--rios-sheet-max-h"] = `${layout.maxHeight}px`;
       }
       // With the keyboard up we anchor top + bottom (no explicit height), so
       // the sheet fills the visual viewport regardless of update timing.
@@ -916,6 +926,8 @@ function MobileSheet({
       role="dialog"
       aria-modal="true"
       aria-hidden={!open}
+      data-rios-overlay
+      data-open={open ? "true" : "false"}
       inert={!present}
       onPointerDownCapture={(event) => {
         const target = event.target;
@@ -937,6 +949,7 @@ function MobileSheet({
         type="button"
         aria-label={cancelLabel || doneLabel || "Close"}
         className={styles.backdrop}
+        data-rios-backdrop
         onPointerDown={(event) => {
           event.preventDefault();
           onDismiss();
@@ -955,6 +968,8 @@ function MobileSheet({
           styles.sheet,
           open ? styles.sheetOpen : styles.sheetClosed
         )}
+        data-rios-sheet
+        data-open={open ? "true" : "false"}
       >
         {/* iOS selection header: circular close and confirm controls. */}
         <div className={styles.sheetHeader}>
@@ -963,8 +978,9 @@ function MobileSheet({
             aria-label={multiple ? cancelLabel : doneLabel}
             onClick={onCancel}
             className={cn(styles.iconBtnRound, styles.closeBtn)}
+            data-rios-cancel
           >
-            <XIcon style={{ width: 24, height: 24 }} strokeWidth={2.2} />
+            <XIcon className={styles.closeIcon} strokeWidth={2.2} />
           </button>
           <span className={styles.sheetTitle}>
             {title}
@@ -975,8 +991,9 @@ function MobileSheet({
               aria-label={confirmLabel}
               onClick={onConfirm}
               className={cn(styles.iconBtnRound, styles.confirmBtn)}
+              data-rios-confirm
             >
-              <CheckIcon style={{ width: 28, height: 28 }} strokeWidth={2.25} />
+              <CheckIcon className={styles.confirmIcon} strokeWidth={2.25} />
             </button>
           ) : (
             <span className={styles.confirmSpacer} aria-hidden="true" />
@@ -995,7 +1012,11 @@ function MobileSheet({
 
 /**
  * OptionRow — memoised so only affected visible rows re-render.
- * Mobile uses an iOS-blue checkmark; desktop retains the green state.
+ *
+ * iOS-native selected state: the row label turns iOS blue and the trailing
+ * indicator becomes a filled circle (accent fill + white checkmark) instead of
+ * an outline glyph. `data-rios-option-value` is always present (desktop +
+ * mobile) so agent drivers can locate any row by value.
  */
 const OptionRow = React.memo(function OptionRow({
   option,
@@ -1005,27 +1026,32 @@ const OptionRow = React.memo(function OptionRow({
   position,
   setSize
 }: {
-  option: AAPLSelectOption;
+  option: SelectOption;
   selected: boolean;
   onToggle: (val: string) => void;
   mobile?: boolean;
   position?: number;
   setSize?: number;
 }) {
+  const ariaLabel = option.description
+    ? `${option.label} — ${option.description}`
+    : option.label;
   return (
     <button
       type="button"
       role="option"
       aria-selected={selected}
+      aria-label={ariaLabel}
       aria-posinset={position}
       aria-setsize={setSize}
-      data-aapl-select-option-value={mobile ? option.value : undefined}
+      data-rios-option-value={option.value}
+      data-selected={selected ? "true" : "false"}
       disabled={option.disabled}
       onClick={() => onToggle(option.value)}
       className={cn(
         styles.option,
         mobile ? styles.optionMobile : styles.optionDesktop,
-        !mobile && (selected ? styles.optionDesktopSelected : styles.optionDesktop),
+        selected && (mobile ? styles.optionMobileSelected : styles.optionDesktopSelected),
         option.disabled && styles.optionDisabled
       )}
     >
@@ -1037,12 +1063,14 @@ const OptionRow = React.memo(function OptionRow({
           </span>
         )}
       </span>
-      {/* Checkmark is only visible when selected. */}
+      {/* iOS-native filled checkmark: a filled circle (accent) with a white
+          check inside. Only rendered when selected; a spacer reserves the
+          slot otherwise so labels stay aligned. */}
       {selected ? (
-        <CheckIcon
-          className={cn(styles.check, mobile ? styles.checkMobile : styles.checkDesktop)}
-          strokeWidth={2.5}
-        />
+        <span className={styles.checkWrap} aria-hidden="true">
+          <span className={cn(styles.checkCircle, mobile ? styles.checkCircleMobile : styles.checkCircleDesktop)} />
+          <CheckIcon className={styles.checkGlyph} strokeWidth={3} />
+        </span>
       ) : (
         <span className={styles.checkSpacer} aria-hidden="true" />
       )}
@@ -1050,4 +1078,4 @@ const OptionRow = React.memo(function OptionRow({
   );
 });
 
-export default AAPLSelect;
+export default Select;

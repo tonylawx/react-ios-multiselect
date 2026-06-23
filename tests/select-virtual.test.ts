@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { computeVirtualOptionRange, optionListSignature } from "../src/aapl-select-virtual";
+import { computeVirtualOptionRange, optionListSignature } from "../src/select-virtual";
 
 describe("computeVirtualOptionRange", () => {
   test("renders only a small window for a large mobile option list", () => {

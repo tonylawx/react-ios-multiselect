@@ -9,7 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "react-ios-multiselect/style.css": new URL(
-        "../src/aapl-select.css",
+        "../src/select.css",
         import.meta.url
       ).pathname,
       "react-ios-multiselect": new URL("../src/index.ts", import.meta.url).pathname,

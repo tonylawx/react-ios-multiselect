@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import "react-ios-multiselect/style.css";
-import { AAPLSelect } from "react-ios-multiselect";
+import { Select } from "react-ios-multiselect";
 
 const FEATURED = ["SMH", "NVDA", "AAPL", "SPCX", "TQQQ"];
 
@@ -76,7 +76,7 @@ function App() {
         <h2 style={{ fontSize: 16, margin: "0 0 12px", color: "var(--rios-color-text)" }}>
           Multi-select
         </h2>
-        <AAPLSelect
+        <Select
           multiple
           value={selected}
           onValueChange={setSelected}
@@ -131,7 +131,7 @@ function App() {
         <h2 style={{ fontSize: 16, margin: "0 0 12px", color: "var(--rios-color-text)" }}>
           Single-select
         </h2>
-        <AAPLSelect
+        <Select
           value={single}
           onValueChange={setSingle}
           options={[

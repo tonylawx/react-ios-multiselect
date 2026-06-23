@@ -1,13 +1,13 @@
 import { describe, expect, test } from "bun:test";
 
 import {
-  AAPL_SELECT_MOBILE_BREAKPOINT,
+  MOBILE_BREAKPOINT,
   computeMobileSheetLayout
-} from "../src/aapl-select-layout";
+} from "../src/select-layout";
 
-describe("AAPLSelect mobile layout", () => {
+describe("Select mobile layout", () => {
   test("uses the same breakpoint as the Tailwind sm layout", () => {
-    expect(AAPL_SELECT_MOBILE_BREAKPOINT).toBe(640);
+    expect(MOBILE_BREAKPOINT).toBe(640);
   });
 
   test("uses at most 85% of the layout viewport when the keyboard is closed", () => {

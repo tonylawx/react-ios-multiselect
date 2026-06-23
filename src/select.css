@@ -1,5 +1,5 @@
 /*
- * react-ios-multiselect styles (global, prefixed with `rioselect-`).
+ * react-ios-multiselect styles (global, prefixed with `rios-`).
  *
  * Import once at your app root:
  *
@@ -14,32 +14,51 @@
  *   }
  */
 :root {
+  /* colors */
   --rios-color-text: #1d2038;
   --rios-color-muted: #7b8190;
   --rios-color-line: rgba(26, 34, 56, 0.1);
-  --rios-color-selected: #0f8f6d;
-  --rios-color-accent: #0a84ff;
+  --rios-color-selected: #0a84ff;        /* iOS blue: selected text + mobile checkmark */
+  --rios-color-accent: #0a84ff;          /* iOS blue: confirm button, active accents */
   --rios-color-trigger-bg: #fcfbf8;
   --rios-color-sheet-bg: #f7f7f9;
   --rios-color-row-active: rgba(0, 0, 0, 0.035);
   --rios-color-desktop-row-active: rgba(29, 32, 56, 0.05);
+  --rios-color-hairline: rgba(60, 60, 67, 0.29); /* iOS standard list separator */
+
+  /* shadows */
   --rios-shadow: 0 24px 60px rgba(23, 29, 45, 0.12);
   --rios-shadow-sheet: 0 18px 70px rgba(15, 23, 42, 0.28);
+
+  /* radii */
   --rios-radius-trigger: 18px;
   --rios-radius-popover: 16px;
   --rios-radius-sheet: 32px;
+
+  /* typography / layout (iOS Settings app defaults) */
+  --rios-font-size-body: 17px;           /* iOS body */
+  --rios-font-size-description: 13px;    /* iOS secondary */
+  --rios-row-height-mobile: 58px;        /* ~44pt @ typical DPI */
+  --rios-row-height-desktop: 44px;
+  --rios-hairline-inset: 16px;           /* separator left inset */
+
+  /* motion */
+  --rios-easing-spring: cubic-bezier(0.32, 0.72, 0, 1); /* iOS spring */
+
+  /* iOS-native filled checkmark sizing */
+  --rios-check-size: 22px;
 }
 
 /* ------------------------------------------------------------------ */
 /* Momentum scrolling + touch tuning                                   */
 /* ------------------------------------------------------------------ */
-.rioselect-scroll {
+.rios-scroll {
   -webkit-overflow-scrolling: touch;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: contain;
 }
 
-.rioselect-sheet-scroll {
+.rios-sheet-scroll {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
 }
@@ -47,7 +66,7 @@
 /* ------------------------------------------------------------------ */
 /* Trigger                                                             */
 /* ------------------------------------------------------------------ */
-.rioselect-trigger {
+.rios-trigger {
   display: flex;
   width: 100%;
   align-items: center;
@@ -68,23 +87,23 @@
 }
 
 @media (min-width: 640px) {
-  .rioselect-trigger {
+  .rios-trigger {
     height: 48px;
     border-radius: 18px;
   }
 }
 
-.rioselect-trigger:disabled {
+.rios-trigger:disabled {
   cursor: not-allowed;
   opacity: 0.5;
 }
 
-.rioselect-trigger:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--rios-color-text) 18%, transparent);
+.rios-trigger:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--rios-color-accent) 30%, transparent);
   outline-offset: 1px;
 }
 
-.rioselect-trigger-label {
+.rios-trigger-label {
   min-width: 0;
   flex: 1 1 0%;
   overflow: hidden;
@@ -93,28 +112,34 @@
   text-align: left;
 }
 
-.rioselect-trigger-label-placeholder {
+.rios-trigger-label-placeholder {
   color: var(--rios-color-muted);
+  font-weight: 400;
 }
 
-.rioselect-chevron {
+.rios-chevron {
   width: 16px;
   height: 16px;
   flex: 0 0 auto;
   color: var(--rios-color-muted);
   opacity: 0.8;
+  transition: transform 0.2s var(--rios-easing-spring);
+}
+
+.rios-chevron-open {
+  transform: rotate(180deg);
 }
 
 /* ------------------------------------------------------------------ */
 /* Desktop popover body                                               */
 /* ------------------------------------------------------------------ */
-.rioselect-desktop-body {
+.rios-desktop-body {
   display: flex;
   max-height: 320px;
   flex-direction: column;
 }
 
-.rioselect-desktop-search-bar {
+.rios-desktop-search-bar {
   display: flex;
   height: 44px;
   flex: 0 0 auto;
@@ -124,14 +149,14 @@
   border-bottom: 1px solid var(--rios-color-line);
 }
 
-.rioselect-search-icon {
+.rios-search-icon {
   width: 16px;
   height: 16px;
   flex: 0 0 auto;
   opacity: 0.5;
 }
 
-.rioselect-search-input {
+.rios-search-input {
   width: 100%;
   height: 100%;
   background: transparent;
@@ -141,26 +166,26 @@
   border: none;
 }
 
-.rioselect-search-input::placeholder {
+.rios-search-input::placeholder {
   color: var(--rios-color-muted);
 }
 
-.rioselect-desktop-scroll-wrap {
+.rios-desktop-scroll-wrap {
   position: relative;
   min-height: 0;
   max-height: 288px;
   flex: 1 1 0%;
 }
 
-.rioselect-desktop-scroll {
+.rios-desktop-scroll {
   max-height: 288px;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 4px;
 }
 
-.rioselect-edge-top,
-.rioselect-edge-bottom {
+.rios-edge-top,
+.rios-edge-bottom {
   position: absolute;
   left: 0;
   right: 0;
@@ -168,17 +193,17 @@
   pointer-events: none;
 }
 
-.rioselect-edge-top {
+.rios-edge-top {
   top: 0;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.06), transparent);
 }
 
-.rioselect-edge-bottom {
+.rios-edge-bottom {
   bottom: 0;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.06), transparent);
 }
 
-.rioselect-empty-text {
+.rios-empty-text {
   padding: 24px 0;
   text-align: center;
   font-size: 14px;
@@ -188,57 +213,76 @@
 /* ------------------------------------------------------------------ */
 /* Option rows (shared desktop + mobile)                              */
 /* ------------------------------------------------------------------ */
-.rioselect-option {
+.rios-option {
   display: flex;
   width: 100%;
   align-items: center;
   gap: 12px;
   text-align: left;
-  font-size: 16px;
+  font-size: var(--rios-font-size-body);
   outline: none;
   border: none;
   background: transparent;
   cursor: pointer;
 }
 
-/* desktop variant */
-.rioselect-option-desktop {
-  padding: 12px;
+/* desktop variant — rounded hover card */
+.rios-option-desktop {
+  min-height: var(--rios-row-height-desktop);
+  padding: 10px 12px;
   border-radius: 12px;
   color: var(--rios-color-text);
 }
 
-.rioselect-option-desktop:active {
+.rios-option-desktop:active {
   background: var(--rios-color-desktop-row-active);
 }
 
-.rioselect-option-desktop-selected {
+/* iOS-native: selected row text turns accent blue */
+.rios-option-desktop-selected {
   color: var(--rios-color-selected);
 }
 
-/* mobile variant */
-.rioselect-option-mobile {
-  height: 64px;
+/* mobile variant — full-width iOS Settings row with hairline separator */
+.rios-option-mobile {
+  min-height: var(--rios-row-height-mobile);
+  height: var(--rios-row-height-mobile);
   padding: 0 4px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  position: relative;
   color: var(--rios-color-text);
 }
 
-.rioselect-option-mobile:active {
+/* iOS hairline separator, inset from the leading edge */
+.rios-option-mobile::after {
+  content: "";
+  position: absolute;
+  left: var(--rios-hairline-inset);
+  right: 0;
+  bottom: 0;
+  height: 0.5px;
+  background: var(--rios-color-hairline);
+}
+
+.rios-option-mobile:active {
   background: var(--rios-color-row-active);
 }
 
-.rioselect-option-disabled {
+/* iOS-native: selected row text turns accent blue */
+.rios-option-mobile-selected {
+  color: var(--rios-color-selected);
+}
+
+.rios-option-disabled {
   pointer-events: none;
   opacity: 0.5;
 }
 
-.rioselect-option-main {
+.rios-option-main {
   min-width: 0;
   flex: 1 1 0%;
 }
 
-.rioselect-option-label {
+.rios-option-label {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -246,64 +290,84 @@
   font-weight: 500;
 }
 
-.rioselect-option-description {
+.rios-option-description {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 12px;
+  font-size: var(--rios-font-size-description);
   font-weight: 400;
   color: var(--rios-color-muted);
 }
 
-.rioselect-check {
-  width: 20px;
-  height: 20px;
+/* ------------------------------------------------------------------ */
+/* iOS-native filled checkmark (selected rows)                        */
+/* A filled circle in the accent color with a white check glyph.      */
+/* ------------------------------------------------------------------ */
+.rios-check-wrap {
+  position: relative;
+  width: var(--rios-check-size);
+  height: var(--rios-check-size);
   flex: 0 0 auto;
-  stroke-width: 2.5;
 }
 
-.rioselect-check-desktop {
-  color: var(--rios-color-selected);
+.rios-check-circle {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
 }
 
-.rioselect-check-mobile {
-  color: var(--rios-color-accent);
+.rios-check-circle-mobile {
+  background: var(--rios-color-accent);
 }
 
-.rioselect-check-spacer {
-  width: 20px;
-  height: 20px;
+.rios-check-circle-desktop {
+  background: var(--rios-color-selected);
+}
+
+.rios-check-glyph {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: calc(var(--rios-check-size) * 0.62);
+  height: calc(var(--rios-check-size) * 0.62);
+  color: #fff;
+  stroke-width: 3.5;
+}
+
+.rios-check-spacer {
+  width: var(--rios-check-size);
+  height: var(--rios-check-size);
   flex: 0 0 auto;
 }
 
 /* ------------------------------------------------------------------ */
 /* Mobile sheet                                                       */
 /* ------------------------------------------------------------------ */
-.rioselect-overlay {
+.rios-overlay {
   position: fixed;
   inset: 0;
   z-index: 230;
   transition: opacity 220ms ease;
 }
 
-.rioselect-overlay-visible {
+.rios-overlay-visible {
   pointer-events: auto;
 }
 
-.rioselect-overlay-hidden {
+.rios-overlay-hidden {
   pointer-events: none;
 }
 
-.rioselect-overlay-open {
+.rios-overlay-open {
   opacity: 1;
 }
 
-.rioselect-overlay-closed {
+.rios-overlay-closed {
   opacity: 0;
 }
 
-.rioselect-backdrop {
+.rios-backdrop {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.25);
@@ -311,7 +375,7 @@
   cursor: pointer;
 }
 
-.rioselect-sheet {
+.rios-sheet {
   position: absolute;
   left: 8px;
   right: 8px;
@@ -322,22 +386,22 @@
   background: var(--rios-color-sheet-bg);
   color: var(--rios-color-text);
   box-shadow: var(--rios-shadow-sheet);
-  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 220ms var(--rios-easing-spring);
   will-change: transform;
-  bottom: var(--sheet-bottom, 0px);
-  top: var(--sheet-top, auto);
-  max-height: var(--sheet-max-h, 85vh);
+  bottom: var(--rios-sheet-bottom, 0px);
+  top: var(--rios-sheet-top, auto);
+  max-height: var(--rios-sheet-max-h, 85vh);
 }
 
-.rioselect-sheet-open {
+.rios-sheet-open {
   transform: translate3d(0, 0, 0);
 }
 
-.rioselect-sheet-closed {
+.rios-sheet-closed {
   transform: translate3d(0, 100%, 0);
 }
 
-.rioselect-sheet-header {
+.rios-sheet-header {
   display: flex;
   height: 64px;
   flex: 0 0 auto;
@@ -348,19 +412,19 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.045);
 }
 
-.rioselect-sheet-title {
+.rios-sheet-title {
   min-width: 0;
   flex: 1 1 0%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: center;
-  font-size: 16px;
+  font-size: var(--rios-font-size-body);
   font-weight: 600;
   color: var(--rios-color-text);
 }
 
-.rioselect-icon-btn-round {
+.rios-icon-btn-round {
   display: grid;
   place-items: center;
   flex: 0 0 auto;
@@ -370,19 +434,24 @@
   color: #000;
   box-shadow: 0 3px 14px rgba(15, 23, 42, 0.1);
   cursor: pointer;
-  transition: transform 0.1s ease;
+  transition: transform 0.12s var(--rios-easing-spring);
 }
 
-.rioselect-icon-btn-round:active {
+.rios-icon-btn-round:active {
   transform: scale(0.95);
 }
 
-.rioselect-close-btn {
+.rios-close-btn {
   width: 44px;
   height: 44px;
 }
 
-.rioselect-confirm-btn {
+.rios-close-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.rios-confirm-btn {
   width: 48px;
   height: 48px;
   background: var(--rios-color-accent);
@@ -390,13 +459,18 @@
   box-shadow: 0 5px 18px color-mix(in srgb, var(--rios-color-accent) 35%, transparent);
 }
 
-.rioselect-confirm-spacer {
+.rios-confirm-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.rios-confirm-spacer {
   width: 44px;
   height: 44px;
   flex: 0 0 auto;
 }
 
-.rioselect-sheet-body {
+.rios-sheet-body {
   display: flex;
   min-height: 0;
   flex: 1 1 0%;
@@ -408,7 +482,7 @@
 /* ------------------------------------------------------------------ */
 /* Mobile option list (virtualized)                                   */
 /* ------------------------------------------------------------------ */
-.rioselect-mobile-list-wrap {
+.rios-mobile-list-wrap {
   position: relative;
   min-height: 0;
   flex: 1 1 0%;
@@ -416,7 +490,7 @@
   padding: 0 20px;
 }
 
-.rioselect-mobile-list {
+.rios-mobile-list {
   height: 100%;
   min-height: 0;
   touch-action: pan-y;
@@ -426,18 +500,18 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.rioselect-virtual-track {
+.rios-virtual-track {
   position: relative;
 }
 
-.rioselect-virtual-window {
+.rios-virtual-window {
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
 }
 
-.rioselect-mobile-edge-top {
+.rios-mobile-edge-top {
   position: absolute;
   left: 20px;
   right: 20px;
@@ -447,7 +521,7 @@
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), transparent);
 }
 
-.rioselect-mobile-empty-text {
+.rios-mobile-empty-text {
   padding: 32px 0;
   text-align: center;
   font-size: 14px;
@@ -457,14 +531,14 @@
 /* ------------------------------------------------------------------ */
 /* Mobile bottom search accessory                                     */
 /* ------------------------------------------------------------------ */
-.rioselect-search-accessory {
+.rios-search-accessory {
   position: relative;
   z-index: 10;
   flex: 0 0 auto;
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
 }
 
-.rioselect-search-accessory-bar {
+.rios-search-accessory-bar {
   display: flex;
   height: 48px;
   align-items: center;
@@ -476,7 +550,7 @@
   box-shadow: 0 8px 28px rgba(15, 23, 42, 0.14);
 }
 
-.rioselect-search-accessory-icon {
+.rios-search-accessory-icon {
   width: 20px;
   height: 20px;
   flex: 0 0 auto;
@@ -484,7 +558,7 @@
   stroke-width: 2.4;
 }
 
-.rioselect-search-accessory-input {
+.rios-search-accessory-input {
   height: 100%;
   min-width: 0;
   flex: 1 1 0%;
@@ -495,11 +569,11 @@
   border: none;
 }
 
-.rioselect-search-accessory-input::placeholder {
+.rios-search-accessory-input::placeholder {
   color: var(--rios-color-muted);
 }
 
-.rioselect-clear-btn {
+.rios-clear-btn {
   display: grid;
   place-items: center;
   width: 32px;
@@ -510,25 +584,25 @@
   background: rgba(0, 0, 0, 0.06);
   color: rgba(0, 0, 0, 0.75);
   cursor: pointer;
-  transition: transform 0.1s ease;
+  transition: transform 0.12s var(--rios-easing-spring);
 }
 
-.rioselect-clear-btn:active {
+.rios-clear-btn:active {
   transform: scale(0.95);
 }
 
-.rioselect-clear-icon {
+.rios-clear-icon {
   width: 16px;
   height: 16px;
   stroke-width: 2.4;
 }
 
-.rioselect-safe-area-spacer {
+.rios-safe-area-spacer {
   height: calc(16px + env(safe-area-inset-bottom));
   flex: 0 0 auto;
 }
 
-.rioselect-popover-content {
+.rios-popover-content {
   z-index: 220;
   overflow: hidden;
   border-radius: var(--rios-radius-popover);

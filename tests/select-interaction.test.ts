@@ -1,27 +1,27 @@
 import { describe, expect, test } from "bun:test";
 
 import {
-  createAAPLSelectOptionGesture,
-  getAAPLSelectBottomAccessory,
-  moveAAPLSelectOptionGesture,
-  shouldActivateAAPLSelectOptionGesture,
+  createOptionGesture,
+  getBottomAccessory,
+  moveOptionGesture,
+  shouldActivateOptionGesture,
   shouldPreserveSearchFocusOnOptionPointerDown,
-  shouldDeferAAPLSelectViewportLayout
-} from "../src/aapl-select-interaction";
+  shouldDeferViewportLayout
+} from "../src/select-interaction";
 
-describe("AAPLSelect mobile interaction policy", () => {
+describe("Select mobile interaction policy", () => {
   test("reserves a standalone safe-area spacer when there is no search bar", () => {
-    expect(getAAPLSelectBottomAccessory(false)).toBe("safe-area-spacer");
-    expect(getAAPLSelectBottomAccessory(true)).toBe("search");
+    expect(getBottomAccessory(false)).toBe("safe-area-spacer");
+    expect(getBottomAccessory(true)).toBe("search");
   });
 
   test("defers viewport changes while an option selection gesture is active", () => {
-    expect(shouldDeferAAPLSelectViewportLayout(true)).toBe(true);
-    expect(shouldDeferAAPLSelectViewportLayout(false)).toBe(false);
+    expect(shouldDeferViewportLayout(true)).toBe(true);
+    expect(shouldDeferViewportLayout(false)).toBe(false);
   });
 
   test("activates a stationary touch on pointerup even when click is consumed", () => {
-    const gesture = createAAPLSelectOptionGesture({
+    const gesture = createOptionGesture({
       pointerId: 7,
       value: "AAPL",
       clientX: 120,
@@ -30,7 +30,7 @@ describe("AAPLSelect mobile interaction policy", () => {
     });
 
     expect(
-      shouldActivateAAPLSelectOptionGesture({
+      shouldActivateOptionGesture({
         gesture,
         pointerId: 7,
         scrollTop: 64
@@ -39,14 +39,14 @@ describe("AAPLSelect mobile interaction policy", () => {
   });
 
   test("does not activate an option when the touch becomes a scroll gesture", () => {
-    const gesture = createAAPLSelectOptionGesture({
+    const gesture = createOptionGesture({
       pointerId: 8,
       value: "NVDA",
       clientX: 120,
       clientY: 240,
       scrollTop: 64
     });
-    const movedGesture = moveAAPLSelectOptionGesture({
+    const movedGesture = moveOptionGesture({
       gesture,
       pointerId: 8,
       clientX: 120,
@@ -54,7 +54,7 @@ describe("AAPLSelect mobile interaction policy", () => {
     });
 
     expect(
-      shouldActivateAAPLSelectOptionGesture({
+      shouldActivateOptionGesture({
         gesture: movedGesture,
         pointerId: 8,
         scrollTop: 84

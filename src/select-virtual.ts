@@ -1,5 +1,5 @@
-export const AAPL_SELECT_OPTION_ROW_HEIGHT = 64;
-export const AAPL_SELECT_OPTION_OVERSCAN = 6;
+export const OPTION_ROW_HEIGHT = 64;
+export const OPTION_OVERSCAN = 6;
 
 /**
  * Stable signature of the *visible* option list, used as a scroll-reset key.
@@ -19,8 +19,8 @@ export function computeVirtualOptionRange({
   itemCount,
   scrollTop,
   viewportHeight,
-  rowHeight = AAPL_SELECT_OPTION_ROW_HEIGHT,
-  overscan = AAPL_SELECT_OPTION_OVERSCAN
+  rowHeight = OPTION_ROW_HEIGHT,
+  overscan = OPTION_OVERSCAN
 }: {
   itemCount: number;
   scrollTop: number;
