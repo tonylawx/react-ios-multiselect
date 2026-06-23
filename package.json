@@ -12,7 +12,7 @@
   "bugs": {
     "url": "https://github.com/tonylawx/react-ios-multiselect/issues"
   },
-  "homepage": "https://github.com/tonylawx/react-ios-multiselect#readme",
+  "homepage": "https://tonylawx.github.io/react-ios-multiselect/",
   "keywords": [
     "react",
     "select",
@@ -20,9 +20,9 @@
     "ios",
     "mobile",
     "bottom-sheet",
-    "popover",
     "virtualized",
-    "radix"
+    "zero-dependency",
+    "agent-friendly"
   ],
   "sideEffects": [
     "**/*.css"
@@ -30,6 +30,7 @@
   "files": [
     "dist",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "main": "./dist/index.js",
