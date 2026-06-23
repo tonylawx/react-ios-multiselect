@@ -1,0 +1,541 @@
+/*
+ * react-ios-multiselect styles (global, prefixed with `rioselect-`).
+ *
+ * Import once at your app root:
+ *
+ *   import "react-ios-multiselect/style.css";
+ *
+ * Theme via the CSS custom properties below — they all carry sensible
+ * defaults on :root, so override only what you want to change:
+ *
+ *   :root {
+ *     --rios-color-text: #111827;
+ *     --rios-color-accent: #2563eb;
+ *   }
+ */
+:root {
+  --rios-color-text: #1d2038;
+  --rios-color-muted: #7b8190;
+  --rios-color-line: rgba(26, 34, 56, 0.1);
+  --rios-color-selected: #0f8f6d;
+  --rios-color-accent: #0a84ff;
+  --rios-color-trigger-bg: #fcfbf8;
+  --rios-color-sheet-bg: #f7f7f9;
+  --rios-color-row-active: rgba(0, 0, 0, 0.035);
+  --rios-color-desktop-row-active: rgba(29, 32, 56, 0.05);
+  --rios-shadow: 0 24px 60px rgba(23, 29, 45, 0.12);
+  --rios-shadow-sheet: 0 18px 70px rgba(15, 23, 42, 0.28);
+  --rios-radius-trigger: 18px;
+  --rios-radius-popover: 16px;
+  --rios-radius-sheet: 32px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Momentum scrolling + touch tuning                                   */
+/* ------------------------------------------------------------------ */
+.rioselect-scroll {
+  -webkit-overflow-scrolling: touch;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: contain;
+}
+
+.rioselect-sheet-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* ------------------------------------------------------------------ */
+/* Trigger                                                             */
+/* ------------------------------------------------------------------ */
+.rioselect-trigger {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--rios-color-line);
+  border-radius: var(--rios-radius-trigger);
+  background: var(--rios-color-trigger-bg);
+  color: var(--rios-color-text);
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+@media (min-width: 640px) {
+  .rioselect-trigger {
+    height: 48px;
+    border-radius: 18px;
+  }
+}
+
+.rioselect-trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.rioselect-trigger:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--rios-color-text) 18%, transparent);
+  outline-offset: 1px;
+}
+
+.rioselect-trigger-label {
+  min-width: 0;
+  flex: 1 1 0%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.rioselect-trigger-label-placeholder {
+  color: var(--rios-color-muted);
+}
+
+.rioselect-chevron {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: var(--rios-color-muted);
+  opacity: 0.8;
+}
+
+/* ------------------------------------------------------------------ */
+/* Desktop popover body                                               */
+/* ------------------------------------------------------------------ */
+.rioselect-desktop-body {
+  display: flex;
+  max-height: 320px;
+  flex-direction: column;
+}
+
+.rioselect-desktop-search-bar {
+  display: flex;
+  height: 44px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--rios-color-line);
+}
+
+.rioselect-search-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  opacity: 0.5;
+}
+
+.rioselect-search-input {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  font-size: 16px;
+  color: var(--rios-color-text);
+  outline: none;
+  border: none;
+}
+
+.rioselect-search-input::placeholder {
+  color: var(--rios-color-muted);
+}
+
+.rioselect-desktop-scroll-wrap {
+  position: relative;
+  min-height: 0;
+  max-height: 288px;
+  flex: 1 1 0%;
+}
+
+.rioselect-desktop-scroll {
+  max-height: 288px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+}
+
+.rioselect-edge-top,
+.rioselect-edge-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 16px;
+  pointer-events: none;
+}
+
+.rioselect-edge-top {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.06), transparent);
+}
+
+.rioselect-edge-bottom {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.06), transparent);
+}
+
+.rioselect-empty-text {
+  padding: 24px 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--rios-color-muted);
+}
+
+/* ------------------------------------------------------------------ */
+/* Option rows (shared desktop + mobile)                              */
+/* ------------------------------------------------------------------ */
+.rioselect-option {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  font-size: 16px;
+  outline: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* desktop variant */
+.rioselect-option-desktop {
+  padding: 12px;
+  border-radius: 12px;
+  color: var(--rios-color-text);
+}
+
+.rioselect-option-desktop:active {
+  background: var(--rios-color-desktop-row-active);
+}
+
+.rioselect-option-desktop-selected {
+  color: var(--rios-color-selected);
+}
+
+/* mobile variant */
+.rioselect-option-mobile {
+  height: 64px;
+  padding: 0 4px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--rios-color-text);
+}
+
+.rioselect-option-mobile:active {
+  background: var(--rios-color-row-active);
+}
+
+.rioselect-option-disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.rioselect-option-main {
+  min-width: 0;
+  flex: 1 1 0%;
+}
+
+.rioselect-option-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.rioselect-option-description {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--rios-color-muted);
+}
+
+.rioselect-check {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  stroke-width: 2.5;
+}
+
+.rioselect-check-desktop {
+  color: var(--rios-color-selected);
+}
+
+.rioselect-check-mobile {
+  color: var(--rios-color-accent);
+}
+
+.rioselect-check-spacer {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+/* ------------------------------------------------------------------ */
+/* Mobile sheet                                                       */
+/* ------------------------------------------------------------------ */
+.rioselect-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 230;
+  transition: opacity 220ms ease;
+}
+
+.rioselect-overlay-visible {
+  pointer-events: auto;
+}
+
+.rioselect-overlay-hidden {
+  pointer-events: none;
+}
+
+.rioselect-overlay-open {
+  opacity: 1;
+}
+
+.rioselect-overlay-closed {
+  opacity: 0;
+}
+
+.rioselect-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  border: none;
+  cursor: pointer;
+}
+
+.rioselect-sheet {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--rios-radius-sheet);
+  background: var(--rios-color-sheet-bg);
+  color: var(--rios-color-text);
+  box-shadow: var(--rios-shadow-sheet);
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  bottom: var(--sheet-bottom, 0px);
+  top: var(--sheet-top, auto);
+  max-height: var(--sheet-max-h, 85vh);
+}
+
+.rioselect-sheet-open {
+  transform: translate3d(0, 0, 0);
+}
+
+.rioselect-sheet-closed {
+  transform: translate3d(0, 100%, 0);
+}
+
+.rioselect-sheet-header {
+  display: flex;
+  height: 64px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.045);
+}
+
+.rioselect-sheet-title {
+  min-width: 0;
+  flex: 1 1 0%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--rios-color-text);
+}
+
+.rioselect-icon-btn-round {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: none;
+  border-radius: 9999px;
+  background: #fff;
+  color: #000;
+  box-shadow: 0 3px 14px rgba(15, 23, 42, 0.1);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.rioselect-icon-btn-round:active {
+  transform: scale(0.95);
+}
+
+.rioselect-close-btn {
+  width: 44px;
+  height: 44px;
+}
+
+.rioselect-confirm-btn {
+  width: 48px;
+  height: 48px;
+  background: var(--rios-color-accent);
+  color: #fff;
+  box-shadow: 0 5px 18px color-mix(in srgb, var(--rios-color-accent) 35%, transparent);
+}
+
+.rioselect-confirm-spacer {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+}
+
+.rioselect-sheet-body {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 0%;
+  flex-direction: column;
+  overflow: hidden;
+  padding-top: 4px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Mobile option list (virtualized)                                   */
+/* ------------------------------------------------------------------ */
+.rioselect-mobile-list-wrap {
+  position: relative;
+  min-height: 0;
+  flex: 1 1 0%;
+  overflow: hidden;
+  padding: 0 20px;
+}
+
+.rioselect-mobile-list {
+  height: 100%;
+  min-height: 0;
+  touch-action: pan-y;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rioselect-virtual-track {
+  position: relative;
+}
+
+.rioselect-virtual-window {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+.rioselect-mobile-edge-top {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 0;
+  height: 12px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), transparent);
+}
+
+.rioselect-mobile-empty-text {
+  padding: 32px 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--rios-color-muted);
+}
+
+/* ------------------------------------------------------------------ */
+/* Mobile bottom search accessory                                     */
+/* ------------------------------------------------------------------ */
+.rioselect-search-accessory {
+  position: relative;
+  z-index: 10;
+  flex: 0 0 auto;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+}
+
+.rioselect-search-accessory-bar {
+  display: flex;
+  height: 48px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.14);
+}
+
+.rioselect-search-accessory-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  color: rgba(0, 0, 0, 0.8);
+  stroke-width: 2.4;
+}
+
+.rioselect-search-accessory-input {
+  height: 100%;
+  min-width: 0;
+  flex: 1 1 0%;
+  background: transparent;
+  font-size: 17px;
+  color: var(--rios-color-text);
+  outline: none;
+  border: none;
+}
+
+.rioselect-search-accessory-input::placeholder {
+  color: var(--rios-color-muted);
+}
+
+.rioselect-clear-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  border: none;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.06);
+  color: rgba(0, 0, 0, 0.75);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.rioselect-clear-btn:active {
+  transform: scale(0.95);
+}
+
+.rioselect-clear-icon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.4;
+}
+
+.rioselect-safe-area-spacer {
+  height: calc(16px + env(safe-area-inset-bottom));
+  flex: 0 0 auto;
+}
+
+.rioselect-popover-content {
+  z-index: 220;
+  overflow: hidden;
+  border-radius: var(--rios-radius-popover);
+  border: 1px solid var(--rios-color-line);
+  background: rgba(255, 255, 255, 0.98);
+  color: var(--rios-color-text);
+  box-shadow: var(--rios-shadow);
+  /* Width follows the Radix trigger width via inline --radix var */
+  min-width: var(--radix-popover-trigger-width);
+}

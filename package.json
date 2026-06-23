@@ -1,0 +1,69 @@
+{
+  "name": "react-ios-multiselect",
+  "version": "0.1.0",
+  "description": "iOS-native-feeling responsive React select with a keyboard-aware mobile bottom sheet, virtualized rows, and multi-select draft/commit.",
+  "type": "module",
+  "license": "MIT",
+  "author": "tonylaw",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tonylawx/react-ios-multiselect.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tonylawx/react-ios-multiselect/issues"
+  },
+  "homepage": "https://github.com/tonylawx/react-ios-multiselect#readme",
+  "keywords": [
+    "react",
+    "select",
+    "multiselect",
+    "ios",
+    "mobile",
+    "bottom-sheet",
+    "popover",
+    "virtualized",
+    "radix"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./style.css": "./dist/aapl-select.css",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "prepublishOnly": "bun run build"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.14.0",
+    "radix-ui": "^1.4.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "bun-types": "latest",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.3"
+  }
+}
