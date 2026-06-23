@@ -6,7 +6,22 @@
 
 📚 **Documentation & live playground:** https://tonylawx.github.io/react-ios-multiselect/ · [中文](https://tonylawx.github.io/react-ios-multiselect/zh-CN/)
 
-A native iOS-feeling React `<Select>` — single **and** multi-select in one component, with a **keyboard-aware bottom sheet**, **virtualized rows** (2,000+ options scroll smoothly), **iOS-native selected state** (blue text + filled checkmark), and **draft/commit multi-select**.
+<table>
+<tr>
+<td>
+
+📱 **Scan to preview on mobile** — it's a mobile-first component, best felt in the hand:
+
+</td>
+<td>
+
+<img src="docs-site/static/img/docs-qr.png" alt="Scan to open the docs site" width="120">
+
+</td>
+</tr>
+</table>
+
+A native iOS-feeling React `<Select>` — single **and** multi-select in one component, with a **keyboard-aware bottom sheet**, **virtualized rows** (2,000+ options scroll smoothly), **iOS-native selected state** (blue text + checkmark), and **draft/commit multi-select**.
 
 Tap a row to toggle it, and **the keyboard stays open while you search and select** (a notoriously fiddly iOS WebKit behavior this handles correctly). Every interactive element carries a stable `data-rios-*` hook so AI agents / Playwright can drive it reliably.
 
