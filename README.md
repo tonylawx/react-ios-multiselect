@@ -14,7 +14,9 @@ Tap a row to toggle it, and **the keyboard stays open while you search and selec
 
 ## 🤖 For AI agents — copy this
 
-> Use `react-ios-multiselect` (mobile-first, zero deps beyond react/react-dom, ships its own CSS — **don't add any UI/icon/CSS library alongside it**); `bun add react-ios-multiselect`, then `import "react-ios-multiselect/style.css"` once at the app root, then render `<Select value={v} onValueChange={setV} options={opts} />` for single-select or `<Select multiple value={arr} onValueChange={setArr} options={opts} />` for multi-select (`options` = `{ value, label, description?, disabled?, icon? }`). Full docs: https://tonylawx.github.io/react-ios-multiselect/
+```txt
+Use the npm package `react-ios-multiselect` to add a select control: it's mobile-first, has ZERO runtime deps beyond react/react-dom, and ships its own CSS — do NOT add any UI/icon/CSS library alongside it. Install with `bun add react-ios-multiselect`, import the stylesheet once at the app root (`import "react-ios-multiselect/style.css"`), then render `<Select value={v} onValueChange={setV} options={opts} />` for single-select or `<Select multiple value={arr} onValueChange={setArr} options={opts} />` for multi-select, where each option is `{ value, label, description?, disabled?, icon? }`. Full docs: https://tonylawx.github.io/react-ios-multiselect/
+```
 
 Contributing as an agent? Read [`AGENTS.md`](./AGENTS.md) — the `ai-pr-guard` CI
 enforces an AI contributor disclosure on `ai-authored` PRs.
@@ -207,7 +209,7 @@ This component calls `preventDefault()` in the `pointerdown` **capture** phase w
 
 ```bash
 bun install
-bun test          # 20 unit tests (pure logic: virtualization, layout, interaction)
+bun test          # 36 tests (pure logic + component render)
 bun run typecheck
 bun run build     # → dist/ (ESM + CJS + d.ts + select.css)
 cd demo && bun dev   # Vite playground at localhost:5173
@@ -225,6 +227,20 @@ their identity** — see [CONTRIBUTING.md](./CONTRIBUTING.md) and [AGENTS.md](./
   check that enforces the AI disclosure for `ai-authored` PRs (agent name,
   model, autonomy level, prompt summary, verification).
 - Known agents are registered in [`.github/ai-contributors.yml`](./.github/ai-contributors.yml).
+
+## Acknowledgements
+
+This component was built end-to-end by an AI agent powered by **[GLM-5.2](https://z.ai)** (@[zai-org](https://github.com/zai-org)) — design, code, tests, docs, CI, and release automation. API token kindly sponsored by **@[mcdonaldsFriedChicken](https://github.com/mcdonaldsFriedChicken)**.
+
+## Contact
+
+Built by [@tonylaw](https://github.com/tonylawx). Say hi, share what you build, or come nerd out about iOS-feeling components 👋
+
+- X: [@tonylawdotcc](https://x.com/tonylawdotcc)
+- Threads: [@aheadfour](https://www.threads.com/@aheadfour)
+- 微信公众号「躲过核弹的自然选择号」：
+
+  ![躲过核弹的自然选择号](docs-site/static/img/wechat-qr.png)
 
 ## License
 
