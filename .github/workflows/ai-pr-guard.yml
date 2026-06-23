@@ -1,0 +1,62 @@
+name: ai-pr-guard
+
+# Enforces the AI contributor disclosure policy (see CONTRIBUTING.md /
+# AGENTS.md). A PR carrying the `ai-authored` label MUST include the filled-in
+# "AI contributor disclosure" section in its description. PRs without the label
+# are assumed human-authored and skipped.
+
+on:
+  pull_request:
+    types: [opened, edited, labeled, unlabeled, reopened]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  check-disclosure:
+    if: contains(github.event.pull_request.labels.*.name, 'ai-authored')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate disclosure section
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request.body || "";
+            const section = body.split("AI contributor disclosure")[1] || "";
+
+            const required = ["Agent:", "Model:", "Autonomy:", "Prompt summary:", "Local verification:"];
+            const missing = required.filter(k => !section.includes(k));
+
+            if (missing.length) {
+              core.setFailed(
+                "This PR is labeled `ai-authored` but its description is missing required " +
+                "AI contributor disclosure fields: " + missing.join(", ") +
+                ". Fill in the 'AI contributor disclosure' section (see .github/PULL_REQUEST_TEMPLATE.md) " +
+                "or remove the label if it was applied by mistake."
+              );
+            }
+
+      - name: Post guidance on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.payload.pull_request.number,
+              body: [
+                "🤖 **AI disclosure check failed.**",
+                "",
+                "This PR is labeled `ai-authored`, so it must include a complete **AI contributor disclosure** section:",
+                "- **Agent:** (e.g. ZCode, Cursor 0.42, Claude Code)",
+                "- **Model:** (e.g. GLM-5.2, gpt-5, claude-opus-4.5)",
+                "- **Autonomy:** human-directed | human-supervised | autonomous",
+                "- **Prompt summary:**",
+                "- **Local verification:**",
+                "",
+                "Edit the PR description to fill these in, then the check re-runs automatically. See `CONTRIBUTING.md` and `AGENTS.md`."
+              ].join("\n")
+            });

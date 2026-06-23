@@ -27,6 +27,12 @@ export type SelectOption = {
   label: string;
   description?: string;
   disabled?: boolean;
+  /**
+   * Optional leading icon rendered to the left of the label. Accepts either a
+   * ReactNode (e.g. `<img src={...} />`) or a function `(option) => ReactNode`
+   * so you can reuse one renderer across options or branch on option data.
+   */
+  icon?: React.ReactNode | ((option: SelectOption) => React.ReactNode);
 };
 
 export type SelectBaseProps = {
@@ -917,6 +923,10 @@ const OptionRow = React.memo(function OptionRow({
   const ariaLabel = option.description
     ? `${option.label} — ${option.description}`
     : option.label;
+  // Resolve the leading icon: accept either a ReactNode or a (option) => ReactNode.
+  const iconNode = typeof option.icon === "function"
+    ? option.icon(option)
+    : option.icon;
   return (
     <button
       type="button"
@@ -936,6 +946,9 @@ const OptionRow = React.memo(function OptionRow({
         option.disabled && styles.optionDisabled
       )}
     >
+      {iconNode != null && (
+        <span className={styles.optionIcon} aria-hidden="true">{iconNode}</span>
+      )}
       <span className={styles.optionMain}>
         <span className={styles.optionLabel}>{option.label}</span>
         {option.description && (

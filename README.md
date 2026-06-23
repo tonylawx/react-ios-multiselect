@@ -101,11 +101,24 @@ const options = [
 ];
 ```
 
+With a leading icon (logos, glyphs — renders to the left of the label):
+
+```tsx
+// per-option ReactNode
+const options = [
+  { value: "AAPL", label: "AAPL", icon: <img src="/logos/aapl.svg" alt="" /> },
+  { value: "TSLA", label: "TSLA", icon: <img src="/logos/tsla.svg" alt="" /> },
+];
+// or a renderer function reused across options (receives the option):
+const icon = (o) => <Logo symbol={o.value} />;
+const options = symbols.map((s) => ({ ...s, icon }));
+```
+
 ## Props
 
 | Prop                  | Type                              | Default              | Description |
 |-----------------------|-----------------------------------|----------------------|-------------|
-| `options`             | `{ value, label, description?, disabled? }[]` | —          | The option list. |
+| `options`             | `{ value, label, description?, disabled?, icon? }[]` | —          | The option list. `icon` is a ReactNode or `(option) => ReactNode` rendered to the left of the label. |
 | `multiple`            | `boolean`                         | `false`              | Enables multi-select. Changes the `value` / `onValueChange` signature. |
 | `value`               | `string` \| `string[]`            | —                    | Controlled value. `string` for single, `string[]` when `multiple`. |
 | `onValueChange`       | `(v: string \| string[]) => void` | —                    | Change callback. |
@@ -190,6 +203,17 @@ cd demo && bun dev   # Vite playground at localhost:5173
 ```
 
 The pure logic (virtualization range, sheet layout, tap gesture) is fully unit-tested and framework-agnostic — exported for advanced consumers who want to build a custom UI on the same primitives.
+
+## Contributing (humans & AI agents)
+
+Contributions from both humans and AI agents are welcome. **Agents must disclose
+their identity** — see [CONTRIBUTING.md](./CONTRIBUTING.md) and [AGENTS.md](./AGENTS.md).
+
+- Agents: read **AGENTS.md** first, then grab an `agent-task` issue.
+- Every PR runs `bun test && typecheck && build` in CI, plus an `ai-pr-guard`
+  check that enforces the AI disclosure for `ai-authored` PRs (agent name,
+  model, autonomy level, prompt summary, verification).
+- Known agents are registered in [`.github/ai-contributors.yml`](./.github/ai-contributors.yml).
 
 ## License
 

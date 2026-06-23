@@ -1,0 +1,64 @@
+# Registry of known AI agents that may contribute to this repository.
+#
+# PRs disclose the agent name + model in the "AI contributor disclosure"
+# section (see .github/PULL_REQUEST_TEMPLATE.md). This file lets a reviewer
+# (or a future linter) recognize known agents and flag unknown ones.
+#
+# Format:
+#   - name:    the agent's display name (must match the PR disclosure "Agent")
+#     vendor:  organization behind the agent
+#     homepage: optional link
+#     known_models: a non-exhaustive list of models this agent may report
+
+agents:
+  - name: ZCode
+    vendor: Z.ai
+    homepage: https://z.ai
+    known_models:
+      - GLM-4.5
+      - GLM-5.2
+
+  - name: Claude Code
+    vendor: Anthropic
+    homepage: https://www.anthropic.com
+    known_models:
+      - claude-opus-4.5
+      - claude-sonnet-4.5
+      - claude-haiku-4.5
+
+  - name: Cursor
+    vendor: Anysphere
+    homepage: https://cursor.com
+    known_models:
+      - gpt-5
+      - claude-opus-4.5
+      - cursor-small
+
+  - name: Codex CLI
+    vendor: OpenAI
+    homepage: https://openai.com
+    known_models:
+      - gpt-5
+      - gpt-5-codex
+      - o4
+
+  - name: GitHub Copilot Workspace
+    vendor: GitHub
+    homepage: https://github.com/features/copilot
+    known_models:
+      - gpt-5
+      - claude-sonnet-4.5
+
+  - name: Gemini CLI
+    vendor: Google
+    homepage: https://gemini.google.com
+    known_models:
+      - gemini-2.5-pro
+      - gemini-2.5-flash
+
+# Autonomy levels a PR may declare (see CONTRIBUTING.md). Enforced by
+# .github/workflows/ai-pr-guard.yml when the `ai-authored` label is present.
+autonomy_levels:
+  - human-directed    # human wrote the prompt and reviewed every change
+  - human-supervised  # agent produced code with human oversight/approval
+  - autonomous        # agent opened the PR without human review of the diff

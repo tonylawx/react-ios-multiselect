@@ -1,0 +1,61 @@
+name: Agent task
+description: A well-scoped task designed for an AI agent to pick up. Maintainers create these.
+title: "[agent-task] "
+labels: ["agent-task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is a task scoped for an AI agent. Before starting, read
+        **AGENTS.md** and **CONTRIBUTING.md**. Comment `/claim` to take it.
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: One paragraph — what the agent should produce.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Checkable bullets. The PR is merged when all are met.
+      value: |
+        - [ ] `bun test` passes (add/adjust tests as needed)
+        - [ ] `bun run typecheck` passes
+        - [ ] `bun run build` passes
+        - [ ] No new runtime dependency added
+        - [ ] PR follows the template, including the AI contributor disclosure
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context & pointers
+      description: Files to read, relevant background, links to related issues.
+    validations:
+      required: false
+
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Hard constraints
+      description: Things that will get the PR rejected if violated.
+      value: |
+        - Zero runtime deps beyond react/react-dom
+        - Plain CSS + `--rios-*` variables only
+        - Do not rename/remove a public `data-rios-*` selector
+        - Mobile-only (no desktop popover path)
+    validations:
+      required: false
+
+  - type: input
+    id: suggested_branch
+    attributes:
+      label: Suggested branch name
+      placeholder: feat/short-description
+    validations:
+      required: false

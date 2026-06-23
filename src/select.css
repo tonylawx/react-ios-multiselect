@@ -159,6 +159,21 @@
   flex: 1 1 0%;
 }
 
+/* Leading icon slot — rendered to the left of the label when option.icon is set.
+   Sized to a typical avatar/logo; shrink to fit small glyphs. */
+.rios-option-icon {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+}
+.rios-option-icon > * {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
 .rios-option-label {
   display: block;
   overflow: hidden;

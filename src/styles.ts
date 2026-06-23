@@ -24,6 +24,7 @@ export const styles = {
   optionRowSelected: "rios-option-row-selected",
   optionDisabled: "rios-option-disabled",
   optionMain: "rios-option-main",
+  optionIcon: "rios-option-icon",
   optionLabel: "rios-option-label",
   optionDescription: "rios-option-description",
 
