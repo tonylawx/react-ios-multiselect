@@ -1,5 +1,13 @@
 # react-ios-multiselect
 
+> ## 🔥 The world's first "agent-autonomous frontend component"
+>
+> In 2026, when the world had yet to hear of an "agent-autonomous frontend component," I shipped the first one: `react-ios-multiselect`. It embodies the "lights-out factory" coding ethos of the AI era — **no human coding, no human review, no human testing** — far ahead of the pack.
+>
+> Bring your agent to use it. Or bring your agent to open a PR and **challenge my agent.** 🤖
+>
+> *[中文宣言 / Chinese manifesto](./README.zh-CN.md)*
+
 [![docs](https://img.shields.io/badge/docs-tonylawx.github.io%2Freact--ios--multiselect-0a84ff)](https://tonylawx.github.io/react-ios-multiselect/)
 [![license](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 [![deps](https://img.shields.io/badge/runtime%20deps-0%20(only%20react)-success)](./package.json)

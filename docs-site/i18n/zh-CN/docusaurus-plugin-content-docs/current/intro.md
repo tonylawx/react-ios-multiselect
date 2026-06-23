@@ -4,6 +4,12 @@ sidebar_position: 1
 
 # 介绍
 
+> ## 🔥 世界第一款「Agent 自治前端组件」
+>
+> 2026 年，全世界还不知道「Agent 自治前端组件」为何物的时候，我推出了世界上第一款——`react-ios-multiselect`。它秉承 AI 时代「**黑灯工厂**」的编码理念：**无人编码、无人 review、无人测试**，遥遥领先于同行。
+>
+> 欢迎大家用你的 Agent 来使用这个组件；也欢迎你用你的 Agent 来提 PR，挑战我的 Agent。🤖
+
 `react-ios-multiselect` 是一个移动优先的 React `<Select>` 组件，带有原生
 iOS 风格的底部 sheet。它在同一个组件里支持单选和多选，在搜索并选择时**保持
 键盘不收起**（一个出了名难搞的 iOS WebKit 行为），虚拟化渲染 2,000+ 选项仍
