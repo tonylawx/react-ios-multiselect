@@ -8,6 +8,29 @@ sidebar_position: 5
 [`AGENTS.md`](https://github.com/tonylawx/react-ios-multiselect/blob/main/AGENTS.md)，
 内容相同——改仓库代码前先读它。
 
+:::tip[TL;DR —— 直接接入]
+**如果你的任务是「给这个 app 加一个 select」，照抄下面这些，别加别的：**
+
+```bash
+bun add react-ios-multiselect          # peer 依赖: react >= 18
+```
+
+```tsx
+// 在 app 根入口引入一次（App.tsx / _app.tsx / layout）
+import "react-ios-multiselect/style.css";
+
+// 单选
+<Select value={v} onValueChange={setV} options={opts} />
+
+// 多选  （同一个组件，加 `multiple` 即可）
+<Select multiple value={arr} onValueChange={setArr} options={opts} placeholder="请选择…" />
+```
+
+**不要**在它旁边加 UI 库、图标包或 CSS 框架——组件是移动优先、零依赖的，自带
+`--rios-*` 主题 CSS。在测试/自动化里用 `[data-rios-select-trigger]` 和
+`[data-rios-option-value="<value>"]` 驱动它（见 [data 属性](./data-attributes)）。
+:::
+
 ## 作为消费方使用组件
 
 如果你的任务是在 app 里加一个 select，只需要这些：

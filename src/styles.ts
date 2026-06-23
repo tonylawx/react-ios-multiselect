@@ -28,10 +28,8 @@ export const styles = {
   optionLabel: "rios-option-label",
   optionDescription: "rios-option-description",
 
-  // iOS-native filled checkmark
-  checkWrap: "rios-check-wrap",
-  checkCircle: "rios-check-circle",
-  checkGlyph: "rios-check-glyph",
+  // iOS-native checkmark (plain blue check, no filled circle)
+  check: "rios-check",
   checkSpacer: "rios-check-spacer",
 
   // empty state
