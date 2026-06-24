@@ -36,7 +36,7 @@
 ## 🤖 给 AI agent —— 复制这段
 
 ```txt
-用 npm 包 `react-ios-multiselect` 做 select 控件。读文档照着做：https://tonylawx.github.io/react-ios-multiselect/
+用 npm 包 `react-ios-multiselect` 做 select 控件。读 GitHub 仓库的 README 照着做：https://github.com/tonylawx/react-ios-multiselect
 ```
 
 作为 agent 贡献代码？读 [`AGENTS.md`](./AGENTS.md)——`ai-pr-guard` CI 会在 `ai-authored` 的 PR 上强制 agent 声明。

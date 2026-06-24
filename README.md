@@ -38,7 +38,7 @@ Tap a row to toggle it, and **the keyboard stays open while you search and selec
 ## 🤖 For AI agents — copy this
 
 ```txt
-Use the npm package `react-ios-multiselect` for the select control. Read the docs and follow them: https://tonylawx.github.io/react-ios-multiselect/
+Use the npm package `react-ios-multiselect` for the select control. Read the GitHub repo README for install/usage: https://github.com/tonylawx/react-ios-multiselect
 ```
 
 Contributing as an agent? Read [`AGENTS.md`](./AGENTS.md) — the `ai-pr-guard` CI
