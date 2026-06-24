@@ -6,7 +6,7 @@ import Heading from "@theme/Heading";
 import DemoBox from "../components/DemoBox";
 import { MultiDemo } from "../components/demos";
 
-const AGENT_PROMPT = `Use the npm package \`react-ios-multiselect\` for the select control. Read the docs and follow them: https://tonylawx.github.io/react-ios-multiselect/`;
+const AGENT_PROMPT = `Use the npm package \`react-ios-multiselect\` for the select control. Read the GitHub repo README for install/usage: https://github.com/tonylawx/react-ios-multiselect`;
 
 /** A code card with a one-click Copy button. */
 function CopyPrompt({ text }: { text: string }) {
@@ -95,8 +95,12 @@ export default function Home(): JSX.Element {
       </header>
 
       <main style={{ maxWidth: 720, margin: "0 auto", padding: "1rem 1rem 4rem" }}>
+        <DemoBox title="A real, interactive component — tap the trigger">
+          <MultiDemo />
+        </DemoBox>
+
         {/* One-line agent integration prompt — copy & send to an agent */}
-        <section style={{ marginTop: "1rem", marginBottom: "2rem" }}>
+        <section style={{ marginTop: "2rem", marginBottom: "2rem" }}>
           <Heading as="h3">📋 Send this to an agent</Heading>
           <p style={{ marginTop: 0 }}>
             Copy this one prompt, paste it to your AI coding agent, and it ships the
@@ -108,10 +112,6 @@ export default function Home(): JSX.Element {
             <Link to="/docs/agent-guide">agent guide</Link>.
           </p>
         </section>
-
-        <DemoBox title="A real, interactive component — tap the trigger">
-          <MultiDemo />
-        </DemoBox>
 
         <section style={{ marginTop: "2rem" }}>
           <Feature title="Native iOS feel">
