@@ -79,22 +79,24 @@ export default function Home(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout title={siteConfig.title} description={siteConfig.tagline}>
-      <header style={{ textAlign: "center", padding: "3rem 1rem 2rem" }}>
-        <Heading as="h1">{siteConfig.title}</Heading>
-        <p style={{ fontSize: "1.15rem", opacity: 0.85, maxWidth: 640, margin: "0.5rem auto" }}>
-          {siteConfig.tagline}
-        </p>
-        <div className="hero-buttons">
-          <Link className="button button--primary button--lg hero-btn" to="/docs/intro">
-            Get started
-          </Link>
-          <Link className="button button--secondary button--lg hero-btn" to="/playground">
-            Try the playground
-          </Link>
-        </div>
-      </header>
+      {/* One centered column for hero + body so the page never looks
+          "skewed" (full-bleed header vs a narrower main). */}
+      <main className="homepage">
+        <header className="homepage-hero">
+          <Heading as="h1">{siteConfig.title}</Heading>
+          <p style={{ fontSize: "1.15rem", opacity: 0.85, maxWidth: 640, margin: "0.5rem auto" }}>
+            {siteConfig.tagline}
+          </p>
+          <div className="hero-buttons">
+            <Link className="button button--primary button--lg hero-btn" to="/docs/intro">
+              Get started
+            </Link>
+            <Link className="button button--secondary button--lg hero-btn" to="/playground">
+              Try the playground
+            </Link>
+          </div>
+        </header>
 
-      <main style={{ maxWidth: 720, margin: "0 auto", padding: "1rem 1rem 4rem" }}>
         <DemoBox title="A real, interactive component — tap the trigger">
           <MultiDemo />
         </DemoBox>
