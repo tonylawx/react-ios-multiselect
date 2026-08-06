@@ -10,7 +10,11 @@ const OPTIONS = [
   ...FEATURED.map((symbol) => ({
     value: symbol,
     label: symbol,
-    description: `${symbol} · US`,
+    // SMH's description intentionally mentions AAPL so searching "AAPL" has
+    // both a contains-hit (SMH, earlier in the list) and an exact hit (AAPL).
+    // Ranking should surface AAPL first.
+    description:
+      symbol === "SMH" ? "Semiconductor ETF · holds AAPL" : `${symbol} · US`,
   })),
   ...Array.from({ length: 1_995 }, (_, i) => {
     const symbol = `TEST${String(i + 1).padStart(4, "0")}`;
