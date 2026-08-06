@@ -17,6 +17,7 @@ import {
   type OptionGesture,
   shouldDeferViewportLayout
 } from "./select-interaction";
+import { filterAndRankOptions } from "./select-search";
 import { cn } from "./utils";
 import { styles } from "./styles";
 
@@ -239,20 +240,12 @@ export function Select(props: SelectProps) {
   // --- Deferred search for smooth typing ---
   const deferredQuery = React.useDeferredValue(query);
 
+  // Ranked so exact label/value matches land at the top of the sheet,
+  // followed by prefix matches, then substring / description hits. Empty
+  // query returns the original `options` reference (see filterAndRankOptions).
   const filteredOptions = React.useMemo(() => {
-    if (!isSearchable || !deferredQuery.trim()) return options;
-    const q = deferredQuery.toLowerCase();
-    const out: SelectOption[] = [];
-    for (const o of options) {
-      if (
-        `${o.label} ${o.value} ${o.description ?? ""}`
-          .toLowerCase()
-          .includes(q)
-      ) {
-        out.push(o);
-      }
-    }
-    return out;
+    if (!isSearchable) return options;
+    return filterAndRankOptions(options, deferredQuery);
   }, [options, deferredQuery, isSearchable]);
 
   // Identity used to reset the list scroll: changes whenever the *visible*

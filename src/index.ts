@@ -17,3 +17,11 @@ export {
   computeVirtualOptionRange,
   optionListSignature,
 } from "./select-virtual";
+export {
+  filterAndRankOptions,
+  getSearchMatchRank,
+} from "./select-search";
+export type {
+  SearchableOption,
+  SearchMatchRank,
+} from "./select-search";
