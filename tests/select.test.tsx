@@ -190,6 +190,37 @@ describe("Select — search", () => {
       expect(document.querySelector('[data-rios-option-value="apple"]')).toBeNull();
     });
   });
+
+  test("exact matches are ranked to the top of the visible list", async () => {
+    const opts: SelectOption[] = [
+      { value: "t1", label: "TEST0001", description: "mentions TEST0007 somewhere" },
+      { value: "t2", label: "TEST0002" },
+      { value: "t7", label: "TEST0007" },
+      { value: "t7x", label: "TEST0007 Extra" },
+    ];
+    render(
+      <Select
+        multiple
+        value={[]}
+        onValueChange={() => {}}
+        options={opts}
+        searchable
+        searchPlaceholder="Search"
+      />
+    );
+    fireEvent.click(screen.getByRole("button"));
+    const input = document.querySelector(
+      "[data-rios-search-input]"
+    ) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "TEST0007" } });
+    await waitFor(() => {
+      const rows = Array.from(
+        document.querySelectorAll("[data-rios-option-value]")
+      ).map((el) => el.getAttribute("data-rios-option-value"));
+      // exact (t7) → prefix (t7x) → description contains (t1)
+      expect(rows).toEqual(["t7", "t7x", "t1"]);
+    });
+  });
 });
 
 describe("Select — icon slot", () => {

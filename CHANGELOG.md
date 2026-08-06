@@ -4,6 +4,19 @@ All notable changes to `react-ios-multiselect` are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/), and this project
 adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] — 2026-08-06
+
+### Changed
+- **Search ranking.** Filtered options are now ordered by match quality —
+  exact label/value → prefix → contains (label/value/description) — so the
+  best hit lands at the top of the sheet instead of keeping source order.
+  Empty queries still return the original `options` reference. New pure
+  helpers: `filterAndRankOptions` / `getSearchMatchRank` (exported).
+
+### Tests
+- 47 tests (was 36): added pure ranking suite + a component assertion that
+  exact matches render first in the filtered list.
+
 ## [0.1.0] — 2026-06-23
 
 First public release. A mobile-first, zero-dependency React `<Select>` with a
