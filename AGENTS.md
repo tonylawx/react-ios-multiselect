@@ -78,3 +78,27 @@ the PR** — do not push red and hope CI catches it.
   push. Do not argue about the hard constraints.
 - If a review comment is unclear, ask one focused question — don't guess and
   push a large speculative diff.
+
+## Cursor Cloud specific instructions
+
+Environment is pre-provisioned: `bun` (v1.3, matching CI) is installed and on
+`PATH`, and the startup update script runs `bun install` for both the root
+package and `demo/`. You should not need to install `bun` or dependencies
+yourself.
+
+- **Toolchain:** everything runs through `bun` (package manager, test runner).
+  There is no `npm`/`node_modules`-based flow and no separate lint step —
+  `bun run typecheck` (`tsc --noEmit`) is the type/lint gate. The full
+  verification command is in the section above.
+- **Runnable app = the Vite demo playground.** Run it with
+  `cd demo && bun dev` (serves http://localhost:5173). The demo has its own
+  `bun.lock` and needs its own `bun install`. `demo/vite.config.ts` aliases
+  `react-ios-multiselect` to the library's `src/` (not `dist/`), so demo HMR
+  reflects source edits live — you do NOT need to `bun run build` first when
+  iterating on the component via the demo.
+- **docs-site/** is an optional Docusaurus site with its own dependencies
+  (`cd docs-site && bun install && bun start`). Not needed to verify the
+  component or run tests.
+- `scripts/setup.sh` is a one-time GitHub repo-admin script (creates the
+  `ai-authored` label, enables Pages) requiring an authenticated `gh`. It is
+  NOT part of local dev setup — do not run it for environment setup.
