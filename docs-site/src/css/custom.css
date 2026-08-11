@@ -24,6 +24,7 @@
   max-width: 390px;
   margin: 1.5rem auto;
   padding: 24px 16px 32px;
+  box-sizing: border-box;
   background: linear-gradient(180deg, #faf7f0 0%, #f0ebe1 100%);
   border-radius: 32px;
   border: 1px solid var(--ifm-color-emphasis-200);
@@ -37,30 +38,42 @@
   margin-top: 0.5rem;
 }
 
-/* Homepage hero buttons: strictly equal width on desktop, stacked full-width
-   on mobile, so the two CTAs never look misaligned. */
+/* Homepage hero buttons: equal width, wide enough for "Try the playground"
+   (a fixed 200px was clipping the secondary label). Grid keeps both CTAs
+   aligned; they stack full-width on narrow phones. */
 .hero-buttons {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
-  justify-content: center;
-  margin-top: 1.5rem;
-  flex-wrap: wrap;
+  width: min(100%, 28rem);
+  margin: 1.5rem auto 0;
 }
 
 .hero-btn {
-  width: 200px;
+  width: 100%;
   text-align: center;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 @media (max-width: 480px) {
   .hero-buttons {
-    flex-direction: column;
-    align-items: stretch;
-    max-width: 320px;
-    margin-left: auto;
-    margin-right: auto;
+    grid-template-columns: 1fr;
+    width: min(100%, 20rem);
   }
-  .hero-btn {
-    width: 100%;
-  }
+}
+
+/* Keep the homepage column from ever spilling horizontally (sidebar chrome
+   and long unbroken strings are the usual culprits). */
+.homepage {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 1rem 4rem;
+  box-sizing: border-box;
+  overflow-x: clip;
+}
+
+.homepage-hero {
+  text-align: center;
+  padding-bottom: 2rem;
 }
