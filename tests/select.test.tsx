@@ -168,6 +168,28 @@ describe("Select — interaction", () => {
 });
 
 describe("Select — search", () => {
+  test("clearing search restores all options immediately", () => {
+    render(
+      <Select
+        value=""
+        onValueChange={() => {}}
+        options={FRUITS}
+        searchable
+        searchPlaceholder="Search"
+        emptyText="No matches"
+      />
+    );
+    fireEvent.click(screen.getByRole("button"));
+    const input = document.querySelector(
+      "[data-rios-search-input]"
+    ) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "zzzz-no-match" } });
+    expect(screen.getByText("No matches")).toBeTruthy();
+    fireEvent.change(input, { target: { value: "" } });
+    expect(screen.queryByText("No matches")).toBeNull();
+    expect(document.querySelectorAll("[data-rios-option-value]").length).toBe(3);
+  });
+
   test("typing into the search input filters the option list", async () => {
     render(
       <Select

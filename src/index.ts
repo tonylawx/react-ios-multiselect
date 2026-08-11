@@ -20,6 +20,7 @@ export {
 export {
   filterAndRankOptions,
   getSearchMatchRank,
+  resolveFilteredOptions,
 } from "./select-search";
 export type {
   SearchableOption,

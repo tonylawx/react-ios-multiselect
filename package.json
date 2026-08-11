@@ -1,6 +1,6 @@
 {
   "name": "react-ios-multiselect",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "iOS-native-feeling responsive React select with a keyboard-aware mobile bottom sheet, virtualized rows, and multi-select draft/commit.",
   "type": "module",
   "license": "MIT",
