@@ -17,7 +17,7 @@ import {
   type OptionGesture,
   shouldDeferViewportLayout
 } from "./select-interaction";
-import { filterAndRankOptions } from "./select-search";
+import { resolveFilteredOptions } from "./select-search";
 import { cn } from "./utils";
 import { styles } from "./styles";
 
@@ -241,12 +241,13 @@ export function Select(props: SelectProps) {
   const deferredQuery = React.useDeferredValue(query);
 
   // Ranked so exact label/value matches land at the top of the sheet,
-  // followed by prefix matches, then substring / description hits. Empty
-  // query returns the original `options` reference (see filterAndRankOptions).
-  const filteredOptions = React.useMemo(() => {
-    if (!isSearchable) return options;
-    return filterAndRankOptions(options, deferredQuery);
-  }, [options, deferredQuery, isSearchable]);
+  // followed by prefix matches, then substring / description hits.
+  // Empty short-circuit keys off the *live* query (see resolveFilteredOptions)
+  // so clearing search restores options even when deferredQuery is starved.
+  const filteredOptions = React.useMemo(
+    () => resolveFilteredOptions(options, query, deferredQuery, isSearchable),
+    [options, query, deferredQuery, isSearchable]
+  );
 
   // Identity used to reset the list scroll: changes whenever the *visible*
   // result set's start or size changes — independent of whether the underlying

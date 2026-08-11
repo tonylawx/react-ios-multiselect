@@ -71,3 +71,26 @@ export function filterAndRankOptions<T extends SearchableOption>(
   ranked.sort((a, b) => a.rank - b.rank || a.index - b.index);
   return ranked.map((entry) => entry.option);
 }
+
+/**
+ * Resolve the visible option list for `<Select>`.
+ *
+ * `query` is the live controlled search string; `deferredQuery` is the
+ * `useDeferredValue` lag used for ranking while the user is typing.
+ *
+ * The empty short-circuit **must** key off the live `query`, not
+ * `deferredQuery`. On iOS, high-priority `visualViewport` updates can starve
+ * the deferred commit after the user clears search — so `query === ""` while
+ * `deferredQuery` still holds a stale no-match string. Filtering against that
+ * stale value shows emptyText with an empty search box until the Select
+ * remounts. Short-circuiting on live `query` restores options immediately.
+ */
+export function resolveFilteredOptions<T extends SearchableOption>(
+  options: readonly T[],
+  query: string,
+  deferredQuery: string,
+  isSearchable: boolean
+): readonly T[] {
+  if (!isSearchable || !query.trim()) return options;
+  return filterAndRankOptions(options, deferredQuery);
+}

@@ -4,6 +4,20 @@ All notable changes to `react-ios-multiselect` are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/), and this project
 adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] — 2026-08-11
+
+### Fixed
+- **Empty list after clearing search.** Filtering now short-circuits on the
+  *live* search query, not only `useDeferredValue`. Clearing the search box
+  restores the full option list immediately even when deferred updates are
+  starved by high-priority iOS `visualViewport` listeners (symptom: empty
+  search box + emptyText until the Select remounts, e.g. after a tab switch).
+  New pure helper: `resolveFilteredOptions` (exported).
+
+### Tests
+- 52 tests (was 47): `resolveFilteredOptions` suite covering live-query empty
+  short-circuit vs lagged deferredQuery.
+
 ## [0.2.0] — 2026-08-06
 
 ### Changed

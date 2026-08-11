@@ -3,6 +3,7 @@ import { describe, expect, test } from "bun:test";
 import {
   filterAndRankOptions,
   getSearchMatchRank,
+  resolveFilteredOptions,
   type SearchableOption,
 } from "../src/select-search";
 
@@ -98,5 +99,32 @@ describe("filterAndRankOptions", () => {
       "t7", // exact label
       "t1", // description contains
     ]);
+  });
+});
+
+describe("resolveFilteredOptions", () => {
+  test("restores all options when live query is cleared even if deferredQuery lags", () => {
+    const filtered = resolveFilteredOptions(
+      OPTIONS,
+      "",
+      "zzzz-stale-no-match",
+      true
+    );
+    expect(filtered).toBe(OPTIONS);
+  });
+
+  test("treats whitespace-only live query as cleared", () => {
+    const filtered = resolveFilteredOptions(OPTIONS, "   ", "nvda", true);
+    expect(filtered).toBe(OPTIONS);
+  });
+
+  test("filters against deferredQuery while live query is non-empty", () => {
+    const filtered = resolveFilteredOptions(OPTIONS, "aapl", "aapl", true);
+    expect(filtered.map((o) => o.value)).toEqual(["aapl"]);
+  });
+
+  test("returns options unchanged when not searchable", () => {
+    const filtered = resolveFilteredOptions(OPTIONS, "aapl", "aapl", false);
+    expect(filtered).toBe(OPTIONS);
   });
 });
